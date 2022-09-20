@@ -1,0 +1,31 @@
+package statements;
+
+public class S003_Grade {
+	public static void main(String[] args) {
+		
+		
+		int marks = 50;
+		
+		if(marks>90)
+		{
+			System.out.println("Grade A");
+		}
+		else if(marks>70 && marks<90)
+		{
+			System.out.println("Grade B");
+		}
+		else if(marks>50 && marks<70)
+		{
+			System.out.println("grade C");
+		}
+		else if(marks<50)
+		{
+			System.out.println("grade D");
+		}
+		else
+		{
+			System.out.println("Invalid !!");
+		}
+		
+	}
+}

@@ -1,0 +1,15 @@
+package oprators;
+
+public class A001_Arithmatic {
+	public static void main(String[] args) {
+		
+		
+		// +, -, *, /, %
+		
+		System.out.println("tops"+10);
+		
+		
+		
+		
+	}
+}

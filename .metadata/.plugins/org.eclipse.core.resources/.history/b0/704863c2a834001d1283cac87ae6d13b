@@ -1,0 +1,11 @@
+package oprators;
+
+public class A004_Logical {
+	public static void main(String[] args) {
+		
+		
+		System.out.println(false&&false);
+		
+		
+	}
+}

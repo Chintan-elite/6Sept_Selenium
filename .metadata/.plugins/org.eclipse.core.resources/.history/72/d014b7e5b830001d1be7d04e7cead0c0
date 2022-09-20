@@ -1,0 +1,23 @@
+package basic;
+
+public class Demo {
+	public static void main(String[] args) {
+		
+		byte a = 127;
+		short k = -32767;
+		int i = 5689;
+		long l = 5698;
+		
+		float f = 458.265f;
+		double  d = 4589.2656565;
+		
+		char c = 'A';
+		boolean b = false;
+				
+		
+		System.out.println(a,k);
+		
+		
+		
+	}
+}

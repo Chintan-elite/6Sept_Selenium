@@ -1,0 +1,15 @@
+package statements;
+
+import java.util.Scanner;
+
+public class A001_Scanner {
+	public static void main(String[] args) {
+		
+		
+		Scanner sc = new Scanner(System.in);
+		
+		
+		
+		
+	}
+}
