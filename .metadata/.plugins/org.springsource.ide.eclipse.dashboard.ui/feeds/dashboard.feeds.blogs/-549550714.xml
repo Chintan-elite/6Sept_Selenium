@@ -5,7 +5,298 @@
   <link rel="self" href="https://spring.io/blog.atom" />
   <id>http://spring.io/blog.atom</id>
   <icon>https://spring.io/favicon.ico</icon>
-  <updated>2022-09-19T16:00:00Z</updated>
+  <updated>2022-09-21T17:55:30Z</updated>
+  <entry>
+    <title>Spring Integration 6.0.0-M5 and 5.5.15 Available</title>
+    <link rel="alternate" href="https://spring.io/blog/2022/09/21/spring-integration-6-0-0-m5-and-5-5-15-available" />
+    <category term="releases" label="Releases" />
+    <author>
+      <name>Artem Bilan</name>
+    </author>
+    <id>tag:spring.io,2022-09-21:4921</id>
+    <updated>2022-09-21T17:55:30Z</updated>
+    <content type="html">&lt;div class="paragraph"&gt;
+&lt;p&gt;Dear Spring community,&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;I&amp;#8217;d like to share with you an availability of the latest &lt;code&gt;Milestone 5&lt;/code&gt; of new Spring Integration &lt;code&gt;6.0&lt;/code&gt; generation.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;It can be obtained from &lt;a href="https://repo.spring.io/milestone"&gt;Spring Milestone repository&lt;/a&gt;:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="content"&gt;
+&lt;pre class="prettyprint highlight"&gt;&lt;code data-lang="groovy"&gt;dependencyManagement {
+    imports {
+        mavenBom 'org.springframework.integration:spring-integration-bom:6.0.0-M5'
+    }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Also, Spring Integration &lt;code&gt;5.5.15&lt;/code&gt; has been released with some critical bug fixed and upstream dependencies deprecation resolutions.
+It is recommended to upgrade if you have missed some intermediate releases before or just pull it transitively from upcoming Spring Boot &lt;code&gt;2.6.12&lt;/code&gt; or &lt;code&gt;2.7.4&lt;/code&gt;!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;With the whole Spring portfolio move to Java &lt;code&gt;17&lt;/code&gt; and Jakarta EE, it was a tremendous internal framework refactoring to support new Java language level and &lt;code&gt;jakarta&lt;/code&gt; namespace.
+Plus this includes an upgrade to the latest dependencies which are Jakarta EE compatible or have some breaking changes we couldn&amp;#8217;t move to before.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;The notable changes throughout the whole Spring Integration &lt;code&gt;6.0&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="ulist"&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Spring AOT support - a lot was reworked internally in the framework to satisfy native images expectations and some reflection, proxy and serialization hints are exposed.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;GraphQL support - a new &lt;code&gt;spring-integration-graphql&lt;/code&gt; module has been added.
+It is fully based on a new in portfolio &lt;a href="https://spring.io/projects/spring-graphql"&gt;Spring for GraphQL&lt;/a&gt; project and its &lt;code&gt;GraphQlMessageHandler&lt;/code&gt; is a reactive implementation of the outbound gateway and can perform all &lt;code&gt;query&lt;/code&gt;, &lt;code&gt;mutation&lt;/code&gt; &amp;amp; &lt;code&gt;subscription&lt;/code&gt; GraphQL operations.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;The MQTT module now provides a &lt;code&gt;ClientManager&lt;/code&gt; abstraction to allow to share the same MQTT client for different channel adapters.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;The &lt;code&gt;spring-integration-smb&lt;/code&gt; and &lt;code&gt;spring-integration-hazelcast&lt;/code&gt; &lt;a href="https://github.com/spring-projects/spring-integration-extensions"&gt;extensions&lt;/a&gt; have been migrated to the core project for better community visibility.
+We are planing to migrate more extensions to achieve a better developer experience and maintenance goals.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;A &lt;code&gt;PostgresSubscribableChannel&lt;/code&gt; has been introduced to rely on the native PostgreSQL push notifications feature.
+This way an interaction with a &lt;code&gt;JdbcChannelMessageStore&lt;/code&gt; is not pollable, but rather a plain subscription where we pull a message from the DB whenever a notification happens from PostgreSQL.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Micrometer Observability - an &lt;code&gt;ObservationRegistry&lt;/code&gt; instrumentation infrastructure has been added.
+The &lt;code&gt;AbstractMessageHandler&lt;/code&gt; now emits a &lt;code&gt;CONSUMER&lt;/code&gt; observations instead of just &lt;code&gt;Timer&lt;/code&gt; when an &lt;code&gt;ObservationRegistry&lt;/code&gt; is injected.
+An &lt;code&gt;ObservationPropagationChannelInterceptor&lt;/code&gt; must be used on async and distributed message channels where we would like to propagate an &lt;code&gt;Observation&lt;/code&gt; from the producer to consumer to continue a trace.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;The &lt;code&gt;IntegrationFlows&lt;/code&gt; factory is now deprecated in favor of the same functionality migrated directly to the &lt;code&gt;IntegrationFlow&lt;/code&gt; interface.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;The RMI module is completely removed in favor of other, more secure network protocols.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Apache Camel support - a new &lt;code&gt;spring-integration-camel&lt;/code&gt; module has been added.
+Its &lt;code&gt;CamelMessageHandler&lt;/code&gt; implementation is aimed for easier calls of Apache Camel routes from Spring Integration flows.
+It is based on a Camel&amp;#8217;s &lt;code&gt;ProducerTemplate&lt;/code&gt; and can perform &lt;code&gt;InOnly&lt;/code&gt;, &lt;code&gt;InOut&lt;/code&gt; and &lt;code&gt;InOptionalOut&lt;/code&gt; exchanges carrying Spring Integration messages to/from Apache Camel routes.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;All the messaging annotations (&lt;code&gt;@ServiceActivator&lt;/code&gt;,&lt;code&gt;@Transformer&lt;/code&gt;, &lt;code&gt;@Splitter&lt;/code&gt; etc.) are now &lt;code&gt;@Repeatable&lt;/code&gt;, so you can use the same POJO method in different integration flows.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;The &lt;code&gt;log()&lt;/code&gt; operator of the &lt;code&gt;IntegrationFlow&lt;/code&gt; is now non-terminal - its ambiguity in the end of flow has been resolved and now the behavior of the flow remains the same if there was no &lt;code&gt;log()&lt;/code&gt; operator.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;The &lt;code&gt;RedisLockRegistry&lt;/code&gt; can now work in pub-sub mode to mitigate a busy-spin concern whenever it is possible and lock can be obtained immediately on pub-sub notification.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Also, see a &lt;a href="https://github.com/spring-projects/spring-integration/wiki/Spring-Integration-5.x-to-6.0-Migration-Guide"&gt;Migration Guide&lt;/a&gt; for breaking changes in the framework and its modules.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Give it a try before we go a release candidate in October and you are welcome with any feedback!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;See you in person this December at &lt;a href="https://springone.io/2022/sessions/whats-new-in-spring-integration-60"&gt;SpringOne&lt;/a&gt; to discuss these and other Spring Integration features!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Cheers,&amp;#160;&lt;br&gt;
+Artem&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;&lt;a href="http://projects.spring.io/spring-integration/"&gt;Project Page&lt;/a&gt; | &lt;a href="https://github.com/spring-projects/spring-integration/issues"&gt;GitHub Issues&lt;/a&gt; | &lt;a href="https://github.com/spring-projects/spring-integration/blob/master/CONTRIBUTING.adoc"&gt;Contributing&lt;/a&gt; | &lt;a href="http://stackoverflow.com/questions/tagged/spring-integration"&gt;Help&lt;/a&gt; | &lt;a href="https://gitter.im/spring-projects/spring-integration"&gt;Chat&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
+  </entry>
+  <entry>
+    <title>Spring Authorization Server 1.0.0-M2 available now</title>
+    <link rel="alternate" href="https://spring.io/blog/2022/09/21/spring-authorization-server-1-0-0-m2-available-now" />
+    <category term="releases" label="Releases" />
+    <author>
+      <name>Joe Grandja</name>
+    </author>
+    <id>tag:spring.io,2022-09-20:4920</id>
+    <updated>2022-09-21T14:00:00Z</updated>
+    <content type="html">&lt;div class="paragraph"&gt;
+&lt;p&gt;On behalf of the team and everyone who has contributed, it is my pleasure to announce the general availability of Spring Authorization Server 1.0.0-M2.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;You can download it from &lt;a href="https://repo.spring.io/milestone"&gt;repo.spring.io&lt;/a&gt; milestone repository by using the module coordinates:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="content"&gt;
+&lt;pre class="prettyprint highlight"&gt;&lt;code&gt;implementation 'org.springframework.security:spring-security-oauth2-authorization-server:1.0.0-M2'&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;See the &lt;a href="https://github.com/spring-projects/spring-authorization-server/releases/tag/1.0.0-M2"&gt;release notes&lt;/a&gt; for complete details.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;To get started using Spring Authorization Server, see the &lt;a href="https://docs.spring.io/spring-authorization-server/docs/current/reference/html/getting-started.html"&gt;Getting Started&lt;/a&gt; chapter of the reference documentation and the &lt;a href="https://github.com/spring-projects/spring-authorization-server/tree/main/samples"&gt;samples&lt;/a&gt; to become familiar with setup and configuration.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;We would love to gather your feedback as we strive to improve and build upon this release.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;&lt;a href="https://spring.io/projects/spring-authorization-server"&gt;Project Page&lt;/a&gt; | &lt;a href="https://github.com/spring-projects/spring-authorization-server/issues"&gt;GitHub Issues&lt;/a&gt; | &lt;a href="https://app.zenhub.com/workspaces/authorization-server-5e8f3182b5e8f5841bfc4902/board?repos=248032165"&gt;ZenHub Board&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
+  </entry>
+  <entry>
+    <title>Spring Authorization Server 0.4.0-M2 available now</title>
+    <link rel="alternate" href="https://spring.io/blog/2022/09/21/spring-authorization-server-0-4-0-m2-available-now" />
+    <category term="releases" label="Releases" />
+    <author>
+      <name>Joe Grandja</name>
+    </author>
+    <id>tag:spring.io,2022-09-20:4919</id>
+    <updated>2022-09-21T14:00:00Z</updated>
+    <content type="html">&lt;div class="paragraph"&gt;
+&lt;p&gt;On behalf of the team and everyone who has contributed, it is my pleasure to announce the general availability of Spring Authorization Server 0.4.0-M2.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;You can download it from &lt;a href="https://repo.spring.io/milestone"&gt;repo.spring.io&lt;/a&gt; milestone repository by using the module coordinates:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="content"&gt;
+&lt;pre class="prettyprint highlight"&gt;&lt;code&gt;implementation 'org.springframework.security:spring-security-oauth2-authorization-server:0.4.0-M2'&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;See the &lt;a href="https://github.com/spring-projects/spring-authorization-server/releases/tag/0.4.0-M2"&gt;release notes&lt;/a&gt; for complete details.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;To get started using Spring Authorization Server, see the &lt;a href="https://docs.spring.io/spring-authorization-server/docs/current/reference/html/getting-started.html"&gt;Getting Started&lt;/a&gt; chapter of the reference documentation and the &lt;a href="https://github.com/spring-projects/spring-authorization-server/tree/0.4.x/samples"&gt;samples&lt;/a&gt; to become familiar with setup and configuration.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;We would love to gather your feedback as we strive to improve and build upon this release.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;&lt;a href="https://spring.io/projects/spring-authorization-server"&gt;Project Page&lt;/a&gt; | &lt;a href="https://github.com/spring-projects/spring-authorization-server/issues"&gt;GitHub Issues&lt;/a&gt; | &lt;a href="https://app.zenhub.com/workspaces/authorization-server-5e8f3182b5e8f5841bfc4902/board?repos=248032165"&gt;ZenHub Board&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
+  </entry>
+  <entry>
+    <title>Spring Session 2022.0.0-M3 Released</title>
+    <link rel="alternate" href="https://spring.io/blog/2022/09/20/spring-session-2022-0-0-m3-released" />
+    <category term="engineering" label="Engineering" />
+    <author>
+      <name>Rob Winch</name>
+    </author>
+    <id>tag:spring.io,2022-09-20:4918</id>
+    <updated>2022-09-21T04:06:00Z</updated>
+    <content type="html">&lt;p&gt;On behalf of the team, I’m pleased to announce the release of Spring Session &lt;code&gt;2022.0.0-M3&lt;/code&gt;. These releases deliver, enhancements, bug fixes, and dependency upgrades.&lt;br/&gt;For your convenience, Spring Boot will pick up these artifacts with its upcoming releases.&lt;/p&gt;
+&lt;p&gt;The following modules were updated as part of &lt;code&gt;2022.0.0-M3&lt;/code&gt;:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Spring Session Core &lt;code&gt;3.0.0-M4&lt;/code&gt; - &lt;a href="https://github.com/spring-projects/spring-session/releases/tag/3.0.0-M4"&gt;release notes&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Spring Session Data Redis &lt;code&gt;3.0.0-M4&lt;/code&gt; - &lt;a href="https://github.com/spring-projects/spring-session/releases/tag/3.0.0-M4"&gt;release notes&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Spring Session JDBC &lt;code&gt;3.0.0-M4&lt;/code&gt; - &lt;a href="https://github.com/spring-projects/spring-session/releases/tag/3.0.0-M4"&gt;release notes&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Spring Session Hazelcast &lt;code&gt;3.0.0-M4&lt;/code&gt; - &lt;a href="https://github.com/spring-projects/spring-session/releases/tag/3.0.0-M4"&gt;release notes&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
+  </entry>
+  <entry>
+    <title>Spring Cloud Dataflow 2.10.0-M2 Released</title>
+    <link rel="alternate" href="https://spring.io/blog/2022/09/20/spring-cloud-dataflow-2-10-0-m2-released" />
+    <category term="releases" label="Releases" />
+    <author>
+      <name>Chris Bono</name>
+    </author>
+    <id>tag:spring.io,2022-09-20:4917</id>
+    <updated>2022-09-20T19:00:00Z</updated>
+    <content type="html">&lt;p&gt;On behalf of the team and everyone who has contributed, I’m happy to announce that Spring Cloud Dataflow &lt;code&gt;2.10.0-M2&lt;/code&gt; has been released and is now available from &lt;a href="https://repo.spring.io/milestone"&gt;https://repo.spring.io/milestone&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;This release contains an update of the Spring Boot version and adds back in support for MySQL. See the &lt;a href="https://github.com/spring-cloud/spring-cloud-dataflow/releases/tag/v2.10.0-M2"&gt;release notes&lt;/a&gt; for more information.&lt;/p&gt;&lt;h2&gt;&lt;a href="#stay-in-touch-hellip" class="anchor" name="stay-in-touch-hellip"&gt;&lt;/a&gt;Stay in touch&amp;hellip;&lt;/h2&gt;
+&lt;p&gt;As always, we welcome feedback and contributions, so please reach out to us on &lt;a href="https://stackoverflow.com/questions/tagged/spring-cloud-dataflow"&gt;Stackoverflow&lt;/a&gt; or &lt;a href="https://github.com/spring-cloud/spring-cloud-dataflow/issues"&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
+  </entry>
+  <entry>
+    <title>Spring for Apache Pulsar 0.1.0-M1 is now available</title>
+    <link rel="alternate" href="https://spring.io/blog/2022/09/20/spring-for-apache-pulsar-0-1-0-m1-is-now-available" />
+    <category term="releases" label="Releases" />
+    <author>
+      <name>Chris Bono</name>
+    </author>
+    <id>tag:spring.io,2022-09-20:4916</id>
+    <updated>2022-09-20T15:00:00Z</updated>
+    <content type="html">&lt;div class="paragraph"&gt;
+&lt;p&gt;On behalf of the team and everyone who has contributed, I’m happy to announce that Spring for Apache Pulsar &lt;code&gt;0.1.0-M1&lt;/code&gt; has been released and is now available from &lt;a href="https://repo.spring.io/milestone" class="bare"&gt;https://repo.spring.io/milestone&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;This is the first milestone for the newly introduced Spring for Apache Pulsar framework and is based on Java17, Spring Boot &lt;code&gt;3.0.0-M5&lt;/code&gt; and Spring Framework &lt;code&gt;6.0.0-M5&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Please see our &lt;a href="https://spring.io/blog/2022/08/16/introducing-experimental-spring-support-for-apache-pulsar"&gt;previous blog post&lt;/a&gt; to learn more about the background/details of the project and the &lt;a href="https://github.com/spring-projects-experimental/spring-pulsar/releases/tag/0.1.0-M1"&gt;release notes&lt;/a&gt; for details on this milestone.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;If you’re interested in trying this new release, you can follow the &lt;a href="https://docs.spring.io/spring-pulsar/docs/0.1.0-M1/reference/html/#quick-tour"&gt;Quick Tour&lt;/a&gt; section in the reference docs.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;While the project is in the experimental phase, there is a high level of unit and integration test coverage and we expect you to have  a solid and smooth experience. That being said, when/if you run into any problems please report them on our &lt;a href="https://github.com/spring-projects-experimental/spring-pulsar/issues"&gt;Github issue tracker&lt;/a&gt;. If you have general feedback or want to discuss something else related to the release please use the &lt;a href="https://github.com/spring-projects-experimental/spring-pulsar/discussions/131"&gt;Github release discussion&lt;/a&gt; or for other general feedback feel free to open a &lt;a href="https://github.com/spring-projects-experimental/spring-pulsar/discussions/new"&gt;new discussion&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
+  </entry>
+  <entry>
+    <title>Spring for GraphQL 1.1.0-M1 released</title>
+    <link rel="alternate" href="https://spring.io/blog/2022/09/20/spring-for-graphql-1-1-0-m1-released" />
+    <category term="releases" label="Releases" />
+    <author>
+      <name>Brian Clozel</name>
+    </author>
+    <id>tag:spring.io,2022-09-20:4915</id>
+    <updated>2022-09-20T14:47:00Z</updated>
+    <content type="html">&lt;p&gt;I&amp;rsquo;m pleased to announce the first milestone release of Spring for GraphQL 1.1.0 is now available from our &lt;a href="https://repo.spring.io/milestone"&gt;Milestone repository&lt;/a&gt;. This version will be shipped with Spring Boot 3.0.0-M5 due for release later this week.&lt;/p&gt;
+&lt;p&gt;Spring Boot 3.0 is around the corner and the community is expecting a compatible Spring for GraphQL version to go with it. Currently, &lt;a href="https://spring.io/blog/2022/05/24/preparing-for-spring-boot-3-0"&gt;the best way to prepare for the Spring Boot 3.0 upgrade&lt;/a&gt; is to upgrade to Spring Boot 2.7 and Java 17, but Spring Boot 3.0 has new baseline requirements, namely Java 17, Jakarta APIs and Spring Framework 6.0.&lt;/p&gt;
+&lt;p&gt;Given that Spring for GraphQL 1.0.0 was released towards the end of May this year, we didn&amp;rsquo;t feel we would have enough time nor feedback to go with a major release of the project for Boot 3.0. This is why the goal of the 1.1 release is simply to adapt to the new baseline requirements and provide a smooth upgrade to Spring Boot 3.0 for existing projects.&lt;/p&gt;
+&lt;p&gt;This first milestone brings those foundational changes: the Java 17, Jakarta APIs, and a Spring Framework 6.0 baseline. We&amp;rsquo;re also taking the opportunity to upgrade to GraphQL Java 19.x &amp;ndash; a painless upgrade on our side, thanks to the GraphQL Java team! We&amp;rsquo;ve also replaced our internally developed &lt;a href="https://docs.spring.io/spring-graphql/docs/1.0.1/reference/html/#execution-context"&gt;context propagation mechanism&lt;/a&gt; with the new &lt;a href="https://github.com/spring-projects/spring-graphql/issues/459"&gt;Micrometer Context Propagation&lt;/a&gt; library, that&amp;rsquo;s intended for use broadly across Spring projects. It allows Spring applications to propagate context across various such mechanisms, e.g. &lt;code&gt;ThreadLocal&lt;/code&gt;, Reactor &lt;code&gt;Context&lt;/code&gt;, &lt;code&gt;GraphQLContext&lt;/code&gt;, and others.&lt;/p&gt;
+&lt;p&gt;In the next milestones, we will consider how we can adapt our current arrangement with important themes in Spring Boot 3.0: GraalVM native image and Micrometer Observability support. Given the short timeline, we might schedule some changes for a future version &amp;ndash; again, a smooth upgrade is our top priority here.&lt;/p&gt;&lt;h3&gt;&lt;a href="#how-can-you-help" class="anchor" name="how-can-you-help"&gt;&lt;/a&gt;How can you help?&lt;/h3&gt;
+&lt;p&gt;If you have general questions, please ask on &lt;a href="https://stackoverflow.com"&gt;stackoverflow.com&lt;/a&gt; using the &lt;a href="https://stackoverflow.com/tags/spring-graphql"&gt;&lt;code&gt;spring-graphql&lt;/code&gt; tag&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://spring.io/projects/spring-graphql/"&gt;Project Page&lt;/a&gt; | &lt;a href="https://github.com/spring-projects/spring-graphql"&gt;GitHub&lt;/a&gt; | &lt;a href="https://github.com/spring-projects/spring-graphql/issues"&gt;Issues&lt;/a&gt; | &lt;a href="https://docs.spring.io/spring-graphql/docs/1.1.0-M1/reference/html"&gt;Documentation&lt;/a&gt; | &lt;a href="https://stackoverflow.com/questions/tagged/spring-graphql"&gt;Stack Overflow&lt;/a&gt;&lt;/p&gt;
+&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
+  </entry>
+  <entry>
+    <title>Spring for GraphQL 1.0.2 released</title>
+    <link rel="alternate" href="https://spring.io/blog/2022/09/20/spring-for-graphql-1-0-2-released" />
+    <category term="releases" label="Releases" />
+    <author>
+      <name>Brian Clozel</name>
+    </author>
+    <id>tag:spring.io,2022-09-20:4914</id>
+    <updated>2022-09-20T14:45:00Z</updated>
+    <content type="html">&lt;p&gt;On behalf of everyone involved, I&amp;rsquo;m pleased to announce that Spring for GraphQL 1.0.2 is now available from Maven Central. This version will be shipped with Spring Boot 2.7.4 due for release later this week.&lt;/p&gt;
+&lt;p&gt;This &lt;a href="https://github.com/spring-projects/spring-graphql/releases/tag/v1.0.2"&gt;release includes&lt;/a&gt; a number of enhancements, documentation improvements, dependency upgrades, and a couple of bug fixes. Thanks to all those who have contributed with issue reports and pull requests.&lt;/p&gt;
+&lt;p&gt;We&amp;rsquo;ve also published today a first milestone for the 1.1.0 release, targeting Spring Boot 3.0.&lt;/p&gt;&lt;h3&gt;&lt;a href="#how-can-you-help" class="anchor" name="how-can-you-help"&gt;&lt;/a&gt;How can you help?&lt;/h3&gt;
+&lt;p&gt;If you have general questions, please ask on &lt;a href="https://stackoverflow.com"&gt;stackoverflow.com&lt;/a&gt; using the &lt;a href="https://stackoverflow.com/tags/spring-graphql"&gt;&lt;code&gt;spring-graphql&lt;/code&gt; tag&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://spring.io/projects/spring-graphql/"&gt;Project Page&lt;/a&gt; | &lt;a href="https://github.com/spring-projects/spring-graphql"&gt;GitHub&lt;/a&gt; | &lt;a href="https://github.com/spring-projects/spring-graphql/issues"&gt;Issues&lt;/a&gt; | &lt;a href="https://docs.spring.io/spring-graphql/docs/1.0.2/reference/html"&gt;Documentation&lt;/a&gt; | &lt;a href="https://stackoverflow.com/questions/tagged/spring-graphql"&gt;Stack Overflow&lt;/a&gt;&lt;/p&gt;
+&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
+  </entry>
+  <entry>
+    <title>This Week in Spring - September 20th, 2022</title>
+    <link rel="alternate" href="https://spring.io/blog/2022/09/20/this-week-in-spring-september-20th-2022" />
+    <category term="engineering" label="Engineering" />
+    <author>
+      <name>Josh Long</name>
+    </author>
+    <id>tag:spring.io,2022-09-20:4913</id>
+    <updated>2022-09-20T07:00:00Z</updated>
+    <content type="html">&lt;p&gt;Hi, Spring fans! Welcome to another installment of &lt;em&gt;This Week in Spring&lt;/em&gt; wherein I endeavor as best as I can to capture the latest-and-greatest in the wide, wacky, and wonderful world of Springdom! Naturally, I fail miserably basically every week. There&amp;rsquo;s no way I could hope to capture everything of note. But I persist&amp;hellip; &lt;/p&gt;
+&lt;p&gt;So, without further ado, yet another wonderful week&amp;rsquo;s roundup! &lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;[A Bootiful Podcast: big data legend, former Pivot, and friend to the Spring community, Tim Spann](&lt;a href="https://spring.io/blog/2022/09/15/"&gt;https://spring.io/blog/2022/09/15/&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/09/14/spring-cloud-dataflow-2-9-6-released"&gt;Spring Cloud Dataflow 2.9.6 Released&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/09/19/spring-data-2022-0-0-m6-2021-2-3-and-2021-1-7-released"&gt;Spring Data 2022.0.0-M6, 2021.2.3, and 2021.1.7 released&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/09/19/spring-data-rest-vulnerability-cve-2022-31679"&gt;Spring Data REST Vulnerability (CVE-2022-31679)&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/09/15/spring-framework-6-0-0-m6-and-5-3-23-available-now"&gt;Spring Framework 6.0.0-M6 and 5.3.23 available now&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/09/19/spring-security-6-0-0-m7-and-5-8-0-m3-are-released"&gt;Spring Security 6.0.0-M7 and 5.8.0-M3 are released&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/09/16/spring-tools-4-16-0-released"&gt;Spring Tools 4.16.0 released&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://blog.feedspot.com/spring_blogs/"&gt;15 Best Spring Framework Blogs and Websites in 2022&lt;/a&gt;&lt;br/&gt;a-bootiful-podcast-big-data-legend-former-pivot-and-friend-to-the-spring-community-tim-spann)&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://kubernetes.io/blog/2022/09/15/app-rollout-features-reach-stable/"&gt;Blog: Kubernetes 1.25: Two Features for Apps Rollouts Graduate to Stable&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://feeds.feedblitz.com/~/711688693/0/baeldung~Difference-Between-ClassgetResource-and-ClassLoadergetResource"&gt;Difference Between Class.getResource() and ClassLoader.getResource()&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://feeds.feedblitz.com/~/712177184/0/baeldung~Map-a-JSON-POST-to-Multiple-Spring-MVC-Parameters/"&gt;Map a JSON POST to Multiple Spring MVC Parameters&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;I&amp;rsquo;m honored to be included in a list of &lt;a href="https://biztechmagazine.com/article/2022/09/30-small-business-it-influencers-worth-following-2022"&gt;30 Small Business IT Influencers Worth Following in 2022&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
+  </entry>
   <entry>
     <title>Spring Security 6.0.0-M7 and 5.8.0-M3 are released</title>
     <link rel="alternate" href="https://spring.io/blog/2022/09/19/spring-security-6-0-0-m7-and-5-8-0-m3-are-released" />
@@ -98,8 +389,8 @@
     </author>
     <id>tag:spring.io,2022-09-19:4911</id>
     <updated>2022-09-19T15:49:00Z</updated>
-    <content type="html">&lt;p&gt;&lt;strong&gt;Updates&lt;/strong&gt;&lt;br/&gt;- &lt;strong&gt;[09-19]&lt;/strong&gt; Vulnerability announced here and Spring Data REST &lt;strong&gt;3.6.7&lt;/strong&gt; and &lt;strong&gt;3.7.1&lt;/strong&gt; released&lt;br/&gt;- &lt;strong&gt;[09-19]&lt;/strong&gt; Blog post updated to refer to the CVE report published&lt;/p&gt;
-&lt;p&gt;The Spring Data 2021.1.7 and 2021.2.3 releases shipped &lt;a href="https://spring.io/blog/2022/09/19/spring-data-2022-0-0-m6-2021-2-3-and-2021-1-7-released"&gt;on September 19th&lt;/a&gt; contained releases for Spring Data REST 3.6.7 and 3.7.1 which include fixes for &lt;a href="https://tanzu.vmware.com/security/cve-2022-31679"&gt;CVE-2022-31679&lt;/a&gt;. Users are encouraged to update as soon as possible.&lt;/p&gt;
+    <content type="html">&lt;p&gt;&lt;strong&gt;Updates&lt;/strong&gt;&lt;br/&gt;- &lt;strong&gt;[09-19]&lt;/strong&gt; Vulnerability announced here and Spring Data REST &lt;strong&gt;3.6.7&lt;/strong&gt; and &lt;strong&gt;3.7.3&lt;/strong&gt; released&lt;br/&gt;- &lt;strong&gt;[09-19]&lt;/strong&gt; Blog post updated to refer to the CVE report published&lt;/p&gt;
+&lt;p&gt;The Spring Data 2021.1.7 and 2021.2.3 releases shipped &lt;a href="https://spring.io/blog/2022/09/19/spring-data-2022-0-0-m6-2021-2-3-and-2021-1-7-released"&gt;on September 19th&lt;/a&gt; contained releases for Spring Data REST 3.6.7 and 3.7.3 which include fixes for &lt;a href="https://tanzu.vmware.com/security/cve-2022-31679"&gt;CVE-2022-31679&lt;/a&gt;. Users are encouraged to update as soon as possible.&lt;/p&gt;
 &lt;!-- rendered by Sagan Renderer Service --&gt;</content>
   </entry>
   <entry>
@@ -476,535 +767,6 @@ compile &amp;#39;org.springframework.cloud:spring-cloud-starter-netflix-eureka-c
 ...&#xD;
 }
 &lt;/code&gt;&lt;/pre&gt;
-&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
-  </entry>
-  <entry>
-    <title>This Week in Spring - September 5th, 2022</title>
-    <link rel="alternate" href="https://spring.io/blog/2022/09/06/this-week-in-spring-september-5th-2022" />
-    <category term="engineering" label="Engineering" />
-    <author>
-      <name>Josh Long</name>
-    </author>
-    <id>tag:spring.io,2022-09-06:4900</id>
-    <updated>2022-09-06T07:00:00Z</updated>
-    <content type="html">&lt;p&gt;Hi, Spring fans! How are you? It&amp;rsquo;s a fantastic Tuesday, the 5th of September, 2022, and I couldn&amp;rsquo;t be happier. It&amp;rsquo;s also Labor Day weekend here in the US. It marks the unofficial end of summer, which is a bit sad. But, on the upside, it&amp;rsquo;s a four-day weekend for me! I&amp;rsquo;m technically off today. So, you&amp;rsquo;ll forgive me, but I won&amp;rsquo;t spend too much time here. Let&amp;rsquo;s dive right into this week&amp;rsquo;s roundup!&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/09/01/a-bootiful-podcast-dr-kris-de-volder-on-spring-tools-vs-code-and-so-much-more"&gt;A Bootiful Podcast: Dr. Kris De Volder on Spring Tools, VS Code, and so much more&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://feeds.feedblitz.com/~/709375202/0/baeldung~Connect-to-Multiple-Databases-Using-Spring-Data-Mongodb"&gt;Connect to Multiple Databases Using Spring Data Mongodb&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://apisix.hashnode.dev/end-to-end-tracing-opentelemetry"&gt;End-to-end tracing with OpenTelemetry&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://www.hashicorp.com/blog/refresh-secrets-for-kubernetes-applications-with-vault-agent"&gt;I love this article by Hashicorp&amp;rsquo;s Rosemary Wang on refreshable secrets for Kubernetes Applications with Vault Agent&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/08/30/microsoft-is-committed-to-the-success-of-java-developers"&gt;Microsoft is committed to the success of Java developers&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/08/31/price-reduction-azure-spring-apps-does-more-costs-less"&gt;Price Reduction - Azure Spring Apps does more, costs less!&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://blog.jooq.org/the-second-best-way-to-fetch-a-spring-data-jpa-dto-projection/"&gt;The Second Best Way to Fetch a Spring Data JPA DTO Projection – Java, SQL and jOOQ.&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://vladmihalcea.com/spring-jpa-dto-projection/"&gt;The best way to fetch a Spring Data JPA DTO Projection - Vlad Mihalcea&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;Speaking of JOOQ, did you know there&amp;rsquo;s good reactive API support included? Check it out: &lt;a href="https://blog.jooq.org/3-15-0-release-with-support-for-r2dbc-nested-row-array-and-multiset-types-5-new-sql-dialects-create-procedure-function-and-trigger-support-and-much-more/"&gt;3.15.0 Release with Support for R2DBC, Nested ROW, ARRAY, and MULTISET types, 5 new SQL dialects, CREATE PROCEDURE, FUNCTION, and TRIGGER support and Much More&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
-  </entry>
-  <entry>
-    <title>A Bootiful Podcast: Dr. Kris De Volder on Spring Tools, VS Code, and so much more</title>
-    <link rel="alternate" href="https://spring.io/blog/2022/09/01/a-bootiful-podcast-dr-kris-de-volder-on-spring-tools-vs-code-and-so-much-more" />
-    <category term="engineering" label="Engineering" />
-    <author>
-      <name>Josh Long</name>
-    </author>
-    <id>tag:spring.io,2022-09-01:4899</id>
-    <updated>2022-09-01T07:00:00Z</updated>
-    <content type="html">&lt;p&gt;Hi, Spring fans! In this episode &lt;a href="https://twitter.com/starbuxman"&gt;Josh Long (@starbuxman) &lt;/a&gt; talks to &lt;a href="https://spring.io/team/kdvolder"&gt;Dr. Kris De Volder&lt;/a&gt;, a longtime member of the Spring Tools team, about all the cool stuff he&amp;rsquo;s worked on and is going to work on. And then we get knee deep into a discussion around building IDE integrations.&lt;/p&gt;
-&lt;iframe title="Dr. Kris De Volder on Spring Tools, VS Code, and so much more" allowtransparency="true" height="150" width="100%" style="border: none; min-width: min(100%, 430px);" scrolling="no" data-name="pb-iframe-player" src="https://www.podbean.com/player-v2/?i=cap8y-12b2d6a-pb&amp;from=pb6admin&amp;share=1&amp;download=1&amp;rtl=0&amp;fonts=Arial&amp;skin=1&amp;font-color=&amp;logo_link=episode_page&amp;btn-skin=7"&gt;&lt;/iframe&gt;
-&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
-  </entry>
-  <entry>
-    <title>Price Reduction - Azure Spring Apps does more, costs less!</title>
-    <link rel="alternate" href="https://spring.io/blog/2022/08/31/price-reduction-azure-spring-apps-does-more-costs-less" />
-    <category term="engineering" label="Engineering" />
-    <author>
-      <name>Josh Long</name>
-    </author>
-    <id>tag:spring.io,2022-08-31:4898</id>
-    <updated>2022-08-31T07:00:00Z</updated>
-    <content type="html">&lt;p&gt;We believe in providing the most innovative cloud offerings at incredibly competitive prices. As we operate Azure Spring Apps, we continue to build efficiencies and economies of scale. We are passing those efficiencies to you. &lt;/p&gt;
-&lt;p&gt;Many customers have asked us to lower the size of the base unit to make it easier to get started and accommodate smaller projects. &lt;/p&gt;&lt;h2&gt;&lt;a href="#announcing-price-and-base-unit-reduction" class="anchor" name="announcing-price-and-base-unit-reduction"&gt;&lt;/a&gt;Announcing Price and Base Unit Reduction&lt;/h2&gt;
-&lt;p&gt;Effective September 1st, we are reducing the base unit of Azure Spring Apps Standard and Enterprise to 6 vCPUs and 12 GB of Memory. And reducing the overage prices for vCPU and Memory. &lt;/p&gt;
-&lt;img src="https://github.com/joshlong/blog-images/raw/master/price-reduction-azure-spring-apps-does-more-costs-less/Price-Reductions-Azure-Spring-Apps-Edition-02.png"  /&gt;&lt;h2&gt;&lt;a href="#new-monthly-free-grants" class="anchor" name="new-monthly-free-grants"&gt;&lt;/a&gt;New Monthly FREE Grants&lt;/h2&gt;
-&lt;p&gt;Furthermore, to help you get started, effective mid-September, we are offering monthly FREE grants – 50 vCPU hours and 100 Memory GB hours. &lt;/p&gt;
-&lt;p&gt;Let’s look at a few examples: &lt;/p&gt;
-&lt;p&gt;Note: If you are running 10 app instances with 1 vCPU and 2GB in Azure Spring Apps Standard, the service will consume 50 vCPU hours (10 app instances x 1 vCPU x 5 hours) and 100 Memory GB hours (10 app instances x 2 GB x 5 hours) in 5 hours. After that, the base and overage prices will be charged. Please note that the base unit in Standard tier allocates 6 vCPUs and 12 GB of Memory and it runs for 8 hours and 20 minutes using the monthly free grant. &lt;/p&gt;
-&lt;table&gt;&#xD;
-&lt;thead&gt;&lt;tr&gt;&#xD;
-&lt;td&gt; App instances in Standard   &lt;/td&gt;&#xD;
-&lt;td&gt; No. of FREE hours per month BEFORE the base and or overage prices are charged &lt;/td&gt;&lt;/tr&gt;&#xD;
-&lt;/thead&gt;&#xD;
-&lt;tr&gt;&lt;td&gt;0 to 6 app instances with 1 vCPU and 2GB &lt;/td&gt;&lt;td&gt;8 hours and 20 minutes &lt;/td&gt;&lt;/tr&gt;&#xD;
-&lt;tr&gt;&lt;td&gt;10 app instances with 1 vCPU and 2GB &lt;/td&gt;&lt;td&gt;5 hours&lt;/td&gt;&lt;/tr&gt;&#xD;
-&lt;tr&gt;&#xD;
-&lt;td&gt;20 app instances with 1 vCPU and 2GB &lt;/td&gt;&#xD;
-&lt;td&gt;2 hours and 30 minutes&lt;/td&gt;&#xD;
-&lt;/tr&gt;&#xD;
-&lt;/table&gt;&lt;h1&gt;&lt;a href="#try-today" class="anchor" name="try-today"&gt;&lt;/a&gt;Try Today&lt;/h1&gt;
-&lt;p&gt;In 2019, Microsoft and VMware announced Azure Spring Apps, a fully managed service for Spring applications. Since then we&amp;rsquo;ve helped many customers adopt the service including &lt;a href="https://aka.ms/Bosch.IO"&gt;Bosch&lt;/a&gt;, &lt;a href="https://aka.ms/DLR"&gt;Digital Realty&lt;/a&gt;, &lt;a href="https://mybuild.microsoft.com/en-US/sessions/71ed338e-5f85-44d8-a225-6210fdbdd06d?source=sessions"&gt;FedEx&lt;/a&gt;, &lt;a href="https://www.youtube.com/watch?v=EfgiW6xJseM"&gt;Kroger&lt;/a&gt;, &lt;a href="https://aka.ms/Liantis"&gt;Liantis&lt;/a&gt;, &lt;a href="https://youtu.be/wdwjqXTFFZ0"&gt;Morgan Stanley&lt;/a&gt;, &lt;a href="https://aka.ms/secure-com"&gt;National Life&lt;/a&gt;, &lt;a href="https://customers.microsoft.com/en-us/story/1388620728739667057-raleys-uses-azure-spring-cloud-to-optimize-scale-and-drive-innovation"&gt;Raley&amp;rsquo;s&lt;/a&gt;, and &lt;a href="https://customers.microsoft.com/en-us/story/1358540087031302788-swiss-re-accelerates-java-app-modernization-using-azure-spring-cloud"&gt;SwissRe&lt;/a&gt;. They value the fully managed infrastructure of Azure Spring Apps that lets them focus on their apps, while the service manages dynamic scaling, security patching, out-of-the-box instrumentation for monitoring, and more.&lt;/p&gt;
-&lt;p&gt;We set out to solve many of the common challenges enterprise developers face when running Spring applications at scale. We have continued to collaborate to expand the core service to become the Azure Spring Apps of today with a broader set of features, including the recently announced &lt;a href="https://techcommunity.microsoft.com/t5/apps-on-azure-blog/azure-spring-apps-enterprise-tier-is-now-generally-available/ba-p/3418245"&gt;Azure Spring Apps Enterprise&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;We will continue to deliver on our commitment to provide the best value to you.&lt;/p&gt;
-&lt;p&gt;You can get started today - &lt;a href="https://docs.microsoft.com/en-us/azure/spring-apps/quickstart?tabs=Azure-CLI&amp;pivots=programming-language-java"&gt;deploy&lt;/a&gt; your first Spring app on Azure!&lt;/p&gt;&lt;h2&gt;&lt;a href="#additional-resources" class="anchor" name="additional-resources"&gt;&lt;/a&gt;Additional Resources&lt;/h2&gt;
-&lt;ul&gt;
-  &lt;li&gt;Learn using an &lt;a href="https://docs.microsoft.com/en-us/learn/modules/azure-spring-cloud-workshop/"&gt;MS Learn module&lt;/a&gt; or &lt;a href="https://github.com/microsoft/azure-spring-cloud-training"&gt;self-paced workshop&lt;/a&gt; on GitHub&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://aka.ms/Fitness-Store"&gt;Deploy&lt;/a&gt; Fitness Store Spring Boot apps to Azure&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://aka.ms/Deploy-Spring"&gt;Deploy&lt;/a&gt; Animal Rescue Spring Boot apps to Azure&lt;/li&gt;
-  &lt;li&gt;Learn &lt;a href="https://docs.microsoft.com/en-us/azure/spring-cloud/"&gt;more&lt;/a&gt; about implementing solutions on Azure Spring Apps&lt;/li&gt;
-  &lt;li&gt;Deploy Spring Boot applications by leveraging enterprise best practices &amp;ndash; &lt;a href="https://docs.microsoft.com/en-us/azure/spring-cloud/reference-architecture"&gt;Azure Spring Apps Reference Architecture&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;Migrate your &lt;a href="https://docs.microsoft.com/en-us/azure/developer/java/migration/migrate-spring-boot-to-azure-spring-cloud"&gt;Spring Boot&lt;/a&gt;, &lt;a href="https://docs.microsoft.com/en-us/azure/developer/java/migration/migrate-spring-cloud-to-azure-spring-cloud"&gt;Spring Cloud&lt;/a&gt;, and &lt;a href="https://aka.ms/migrate-tomcat-to-azure-spring-cloud-service"&gt;Tomcat&lt;/a&gt; applications to Azure Spring Apps&lt;/li&gt;
-  &lt;li&gt;Wire Spring applications to &lt;a href="https://docs.microsoft.com/en-us/azure/developer/java/spring-framework/"&gt;interact with Azure services&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;For feedback and questions, please &lt;a href="mailto:AzureSpringCloud-Talk@service.microsoft.com"&gt;e-mail&lt;/a&gt; us.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
-  </entry>
-  <entry>
-    <title>Microsoft is committed to the success of Java developers</title>
-    <link rel="alternate" href="https://spring.io/blog/2022/08/30/microsoft-is-committed-to-the-success-of-java-developers" />
-    <category term="engineering" label="Engineering" />
-    <author>
-      <name>Josh Long</name>
-    </author>
-    <id>tag:spring.io,2022-08-30:4895</id>
-    <updated>2022-08-30T14:43:00Z</updated>
-    <content type="html">&lt;p&gt;Hi, Spring fans! This is a guest post from our friend &lt;strong&gt;Julia Liuson&lt;/strong&gt;, President, Developer Division, Microsoft&lt;/p&gt;
-&lt;p&gt;As a company, we are committed to making Java developers as efficient and productive as possible. This commitment means empowering you to use any tool, framework, and application server on any operating system. Wherever you are with Java, Microsoft supports your workload with an abundance of choices and with a wide range of developer tools and services. &lt;/p&gt;&lt;h2&gt;&lt;a href="#code-deploy-and-scale-java-your-way" class="anchor" name="code-deploy-and-scale-java-your-way"&gt;&lt;/a&gt;Code, Deploy, and Scale Java Your Way&lt;/h2&gt;
-&lt;p&gt;Today, more and more Java developers are looking at how they can bring their existing Java applications to the cloud—or how to build new cloud-native applications. We have been working to make it easier for you to bring your Java applications to the cloud using the tools and frameworks you love. You can then deploy and scale easily using the same application servers and open-source technologies you already know and trust.&lt;/p&gt;
-&lt;p&gt;&lt;img src = "https://github.com/joshlong/blog-images/blob/master/microsoft-is-committed-to-the-success-of-java-developers-2022-08-30/1.jpg?raw=true" style = " width: 300px; float: left; margin-right: 1em " /&gt; Over the past few years, we’ve forged several strategic partnerships with major vendors in the Java ecosystem. These partnerships empower you to code and deploy without worrying about infrastructure. &lt;a href="https://azure.microsoft.com/en-us/blog/introducing-azure-spring-cloud-fully-managed-service-for-spring-boot-microservices/"&gt;Azure Spring Apps&lt;/a&gt; (jointly developed with Pivotal / VMWare) offers native integrations with third-party application performance monitoring (APM) tools from &lt;a href="https://azure.microsoft.com/en-us/blog/use-new-relic-one-to-effortlessly-monitor-applications-in-azure-spring-cloud/"&gt;New Relic&lt;/a&gt;, &lt;a href="https://azure.microsoft.com/en-us/blog/spot-every-spring-boot-application-issue-on-the-spot-using-appdynamics/"&gt;App Dynamics&lt;/a&gt;, &lt;a href="https://azure.microsoft.com/en-us/blog/monitor-spring-boot-applications-endtoend-using-dynatrace/"&gt;Dynatrace&lt;/a&gt;, and &lt;a href="https://azure.microsoft.com/en-us/blog/elastic-and-microsoft-azure-unified-observability-for-spring-boot-applications/"&gt;Elastic&lt;/a&gt;. Our other jointly developed offerings include &lt;a href="https://azure.microsoft.com/en-us/blog/deploy-apps-seamlessly-with-red-hat-jboss-eap-on-azure-app-service-now-generally-available/"&gt;Red Hat JBoss EAP on Azure App Service&lt;/a&gt;, &lt;a href="https://docs.microsoft.com/en-us/azure/developer/java/ee/websphere-family"&gt;WebSphere Application Server&lt;/a&gt;, &lt;a href="https://docs.microsoft.com/en-us/azure/developer/java/ee/websphere-family"&gt;WebSphere Liberty, and Open Liberty&lt;/a&gt; on Azure, &lt;a href="https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/oracle/oracle-weblogic"&gt;Oracle WebLogic Server&lt;/a&gt; on Azure VMs and &lt;a href="https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/oracle/weblogic-aks"&gt;Azure Kubernetes Service&lt;/a&gt;, and &lt;a href="https://docs.microsoft.com/en-us/azure/partner-solutions/apache-kafka-confluent-cloud/overview"&gt;Apache Kafka for Confluent Cloud&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;You can also use a wide range of development and DevOps tools—including Visual Studio Code, IntelliJ IDEA, GitHub, Playwright, Apache Maven, Gradle, and many others. These tools enable you to build, test, and bring your Java apps to the cloud while collaborating effectively and saving time and money. &lt;/p&gt;
-&lt;p&gt;Asir Selvasingh from the Java on Azure engineering group has written a detailed paper called &lt;a href="https://cdn.graph.office.net/prod/media/java/code-deploy-scale-java-your-way.pdf"&gt;Code, Deploy, and Scale Java Your Way (view PDF)&lt;/a&gt;. This paper provides a detailed look at the Java ecosystem that Microsoft has carefully curated and invested in for Java developers. &lt;/p&gt;
-&lt;img src = "https://github.com/joshlong/blog-images/blob/master/microsoft-is-committed-to-the-success-of-java-developers-2022-08-30/2.png?raw=true"  /&gt;
-&lt;p&gt;&lt;a href="https://cdn.graph.office.net/prod/media/java/infographic-code-deploy-scale.pdf"&gt;View Infographic PDF&lt;/a&gt;&lt;/p&gt;&lt;h2&gt;&lt;a href="#microsoft-relies-on-java-and-we-use-it-a-lot" class="anchor" name="microsoft-relies-on-java-and-we-use-it-a-lot"&gt;&lt;/a&gt;Microsoft relies on Java. And we use it. A lot.&lt;/h2&gt;
-&lt;p&gt;Many people are surprised to learn that we’re using Java to run significant parts of Microsoft—and empower thousands of customers to do the same. Specifically, Bing — Microsoft’s web search engine, which also powers the search feature in the Windows Start menu — uses Java to perform indexing-related functions. Beyond Bing, Azure’s infrastructure control plane, and other divisions such as LinkedIn, Minecraft, and Yammer use Java extensively. We have deployed over 2 million JVMs for our internal systems and business needs.&lt;/p&gt;
-&lt;p&gt;We actively support Java community organizations to invest in and help promote the future of Java. We contribute to OpenJDK, and Eclipse Adoptium, Jakarta EE, and MicroProfile in the Eclipse Foundation; we are also a member of the Java Community Process.&lt;/p&gt;
-&lt;p&gt;Over the past several years, thousands of Microsoft customers have moved to Java on Azure, including well-known companies such as &lt;a href="https://customers.microsoft.com/en-us/doclink/adobe-partner-professional-services-azure"&gt;Adobe&lt;/a&gt;, &lt;a href="https://customers.microsoft.com/en-us/story/860509-aia-singapore-drives-performance-enhancements-after-moving-java-applications-to-azure"&gt;AIA&lt;/a&gt;, &lt;a href="https://customers.microsoft.com/en-us/story/1475571259638279673-bosch-delivers-supply-chain-efficiencies-java-azure"&gt;Bosch&lt;/a&gt;, &lt;a href="https://customers.microsoft.com/en-us/story/daimler-manufacturing-azuredevtest"&gt;Daimler&lt;/a&gt;, &lt;a href="https://www.youtube.com/watch?v=fJ_OUNdFXHs"&gt;FedEx&lt;/a&gt;, &lt;a href="https://customers.microsoft.com/en-us/story/jbhunt-travelandtransportation-azure"&gt;J.B. Hunt&lt;/a&gt;, &lt;a href="https://techcommunity.microsoft.com/t5/video-hub/kroger-shares-how-they-migrated-their-stock-management-java/ba-p/2436903"&gt;Kroger&lt;/a&gt;, &lt;a href="https://customers.microsoft.com/en-us/story/maersk-travel-transportation-azure"&gt;Maersk&lt;/a&gt;, &lt;a href="https://customers.microsoft.com/en-us/story/784791-mercedes-benz-r-and-d-creates-container-driven-cars-powered-by-microsoft-azure"&gt;Mercedes Benz&lt;/a&gt;, and &lt;a href="https://customers.microsoft.com/en-us/story/1358540087031302788-swiss-re-accelerates-java-app-modernization-using-azure-spring-cloud"&gt;Swiss Re&lt;/a&gt;. We’ve worked side-by-side with the engineers at these companies to ensure success. Similarly, we work closely with the internal groups at Microsoft who use Java, lending our expertise while learning from theirs. Through such efforts, we’ve amassed a substantial body of insight and expertise towards helping new customers build Java applications on Azure or move existing ones to the cloud—including, for example, how moving to the latest versions of Java can help increase performance and reduce costs.&lt;/p&gt;
-&lt;p&gt;Our engineers and support teams work closely with our customers to run and scale their Java apps efficiently on Azure. Customer success stories, options for customer support, and consistent programming of technical content on Java are all ways Microsoft helps developers succeed.&lt;/p&gt;
-&lt;p&gt;Want to learn more about Microsoft’s focus on Java? We have another new paper by Bruno Borges and Theresa Nguyen from our Java Engineering Group that delves into details of &lt;a href="https://cdn.graph.office.net/prod/media/java/how-microsoft-applies-java.pdf"&gt;how Microsoft applies Java (view PDF)&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;I invite you to check out our new web page for Java developers – developer.microsoft.com/java with the latest content and links to technical documentation, learning paths, and on-demand videos from our conferences and our Java Cloud Developer Advocacy team.&lt;/p&gt;
-&lt;img src = "https://github.com/joshlong/blog-images/blob/master/microsoft-is-committed-to-the-success-of-java-developers-2022-08-30/3.png?raw=true"  /&gt;
-&lt;p&gt;New webpage for Java developers: &lt;a href="https://developer.microsoft.com/java"&gt;developer.microsoft.com/java&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Java developers, I am cheering you on&amp;hellip; Let’s build great apps together! &lt;/p&gt;
-&lt;p&gt;Best,&lt;br/&gt;Julia&lt;/p&gt;&lt;h2&gt;&lt;a href="#resources" class="anchor" name="resources"&gt;&lt;/a&gt;Resources:&lt;/h2&gt;
-&lt;p&gt;Bookmark our new webpage for Java developers:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Visit &lt;a href="https://developer.microsoft.com/java"&gt;developer.microsoft.com/java&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;New papers:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href="https://cdn.graph.office.net/prod/media/java/code-deploy-scale-java-your-way.pdf"&gt;How you can Code, Deploy, and Scale Java Your Way&lt;/a&gt; - By &lt;em&gt;Asir Selvasingh&lt;/em&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://cdn.graph.office.net/prod/media/java/how-microsoft-applies-java.pdf"&gt;How Microsoft applies Java&lt;/a&gt; - By &lt;em&gt;Bruno Borges&lt;/em&gt; and &lt;em&gt;Theresa Nguyen&lt;/em&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Infographics:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href="https://cdn.graph.office.net/prod/media/java/infographic-evolution-of-java-at-microsoft.pdf"&gt;The Evolution of Java at Microsoft&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://cdn.graph.office.net/prod/media/java/infographic-code-deploy-scale.pdf"&gt;Code, Deploy, and Scale Java Your Way&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Stay connected:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Follow us on Twitter - &lt;a href="https://twitter.com/javaatmicrosoft"&gt;&lt;code&gt;@JavaAtMicrosoft&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;Subscribe to our new YouTube channel – &lt;a href="https://www.youtube.com/c/JavaonAzure"&gt;Microsoft for Java Developers&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;Bookmark our blog – &lt;a href="https://devblogs.microsoft.com/java/"&gt;Microsoft Java for Developers&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
-  </entry>
-  <entry>
-    <title>This Week in Spring - August 30th, 2022</title>
-    <link rel="alternate" href="https://spring.io/blog/2022/08/30/this-week-in-spring-august-30th-2022" />
-    <category term="engineering" label="Engineering" />
-    <author>
-      <name>Josh Long</name>
-    </author>
-    <id>tag:spring.io,2022-08-30:4896</id>
-    <updated>2022-08-30T07:00:00Z</updated>
-    <content type="html">&lt;p&gt;Hi, Spring fans! How are you? How&amp;rsquo;re you doin&amp;rsquo; this fine tuesday morning? I&amp;rsquo;m doing well, of course, because this week VMware&amp;rsquo;s tentpole show - VMware Explore - is happening not even a mile from my home, here in San Francisco! And this is just the first one - there&amp;rsquo;ll be another show, my favorite show, in December: SpringOne 2022! I sure hope you&amp;rsquo;ve registered and that we&amp;rsquo;ll see you there! &lt;/p&gt;
-&lt;p&gt;Indeed, I&amp;rsquo;ve got a lunch to get to, so let&amp;rsquo;s get this this week&amp;rsquo;s wrapup done a little more quickly: without further ado&amp;hellip;.&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/08/25/a-bootiful-podcast-fellow-java-champion-and-timescaledb-developer-advocate-christoph-engelbert"&gt;A Bootiful Podcast: Fellow Java Champion and TimescaleDB developer advocate Christoph Engelbert&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/08/26/creating-a-custom-spring-cloud-gateway-filter"&gt;Creating a custom Spring Cloud Gateway Filter&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://feeds.feedblitz.com/~/708213810/0/baeldung~Feign-Client-Exception-Handling"&gt;Feign Client Exception Handling&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://github.com/toedter/spring-hateoas-jsonapi/"&gt;Kai Tödter has just announced version 1.6.0 of JSON:API for Spring HATEOAS&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://feeds.feedblitz.com/~/707795992/0/baeldung~Multitenancy-With-Spring-Data-JPA/"&gt;Multitenancy With Spring Data JPA&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://feeds.feedblitz.com/~/707768758/0/baeldung~PKCE-Support-for-Secret-Clients-with-Spring-Security"&gt;PKCE Support for Secret Clients with Spring Security&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/08/24/spring-batch-5-0-0-m5-is-available-now"&gt;Spring Batch 5.0.0-M5 is available now!&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://feeds.feedblitz.com/~/707768752/0/baeldung~Swagger-Specify-Two-Responses-with-the-Same-Response-Code"&gt;Swagger: Specify Two Responses with the Same Response Code&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://twitter.com/JavaAtMicrosoft/status/1564322134247165952"&gt;Are you building Spring Apps? Join us to learn how to build, deploy and operate Spring Apps at scale.&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://twitter.com/VMware/status/1564658566723563520"&gt;So, here is VMware&amp;rsquo;s stack for building a platform on the platform as kubernetes, the Tanzu Application Platform.&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
-  </entry>
-  <entry>
-    <title>Creating a custom Spring Cloud Gateway Filter</title>
-    <link rel="alternate" href="https://spring.io/blog/2022/08/26/creating-a-custom-spring-cloud-gateway-filter" />
-    <category term="engineering" label="Engineering" />
-    <author>
-      <name>Fredrich Ombico</name>
-    </author>
-    <id>tag:spring.io,2022-08-26:4894</id>
-    <updated>2022-08-27T05:15:00Z</updated>
-    <content type="html">&lt;p&gt;In this article, we look into writing a custom extension for Spring Cloud Gateway. Before we get started, let’s go over how Spring Cloud Gateway works:&lt;/p&gt;
-&lt;p&gt;&lt;img src="https://static.spring.io/blog/fombico/20220826/spring-cloud-gateway-diagram.png" alt="Spring Cloud Gateway diagram" /&gt;&lt;/p&gt;
-&lt;ol&gt;
-  &lt;li&gt;First, a client makes a network request to the Gateway&lt;/li&gt;
-  &lt;li&gt;The Gateway is defined with a number of routes, each with Predicates to match the request to the route. For example, you can match on the path segment of the URL or the HTTP method of the request.&lt;/li&gt;
-  &lt;li&gt;Once matched, the Gateway executes pre-request logic on each of the filters applied to the route. For example, you might want to add query parameters to your request&lt;/li&gt;
-  &lt;li&gt;A proxy filter routes the request to the proxied service&lt;/li&gt;
-  &lt;li&gt;The service executes and returns a response&lt;/li&gt;
-  &lt;li&gt;The gateway receives the response and executes post-request logic on each filter before returning the response. For example, you could remove unwanted response headers before returning to the client.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;Our extension will be hashing the request body, adding the value as a request header called &lt;code&gt;X-Hash&lt;/code&gt;. This corresponds to Step 3 in the diagram above. Note: as we are reading the request body, the gateway will be memory constrained.&lt;/p&gt;
-&lt;p&gt;First, we create a project at &lt;a href="https://start.spring.io/"&gt;start.spring.io&lt;/a&gt; with the Gateway dependency. In this example, we’ll be using a Gradle project in Java with JDK 17 and Spring Boot 2.7.3. Download, unzip, and open the project in your favorite IDE and run it to ensure you are set up for local development.&lt;/p&gt;
-&lt;p&gt;Next let’s create the GatewayFilter Factory, which is a filter scoped to a particular route, that allows us to modify an incoming HTTP request or outgoing HTTP response in some manner. In our case, we’ll be modifying the incoming HTTP request with an additional header:&lt;/p&gt;
-&lt;pre&gt;&lt;code class="prettyprint java"&gt;package com.example.demo;&#xD;
-&#xD;
-import java.security.MessageDigest;&#xD;
-import java.security.NoSuchAlgorithmException;&#xD;
-import java.util.Collections;&#xD;
-import java.util.List;&#xD;
-&#xD;
-import org.bouncycastle.util.encoders.Hex;&#xD;
-import reactor.core.publisher.Mono;&#xD;
-&#xD;
-import org.springframework.cloud.gateway.filter.GatewayFilter;&#xD;
-import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;&#xD;
-import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;&#xD;
-import org.springframework.http.codec.HttpMessageReader;&#xD;
-import org.springframework.http.server.reactive.ServerHttpRequest;&#xD;
-import org.springframework.stereotype.Component;&#xD;
-import org.springframework.util.Assert;&#xD;
-import org.springframework.web.reactive.function.server.HandlerStrategies;&#xD;
-import org.springframework.web.reactive.function.server.ServerRequest;&#xD;
-&#xD;
-import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.CACHED_SERVER_HTTP_REQUEST_DECORATOR_ATTR;&#xD;
-&#xD;
-/**&#xD;
- * This filter hashes the request body, placing the value in the X-Hash header.&#xD;
- * Note: This causes the gateway to be memory constrained.&#xD;
- * Sample usage: RequestHashing=SHA-256&#xD;
- */&#xD;
-@Component&#xD;
-public class RequestHashingGatewayFilterFactory extends&#xD;
-        AbstractGatewayFilterFactory&amp;lt;RequestHashingGatewayFilterFactory.Config&amp;gt; {&#xD;
-&#xD;
-    private static final String HASH_ATTR = &amp;quot;hash&amp;quot;;&#xD;
-    private static final String HASH_HEADER = &amp;quot;X-Hash&amp;quot;;&#xD;
-    private final List&amp;lt;HttpMessageReader&amp;lt;?&amp;gt;&amp;gt; messageReaders =&#xD;
-            HandlerStrategies.withDefaults().messageReaders();&#xD;
-&#xD;
-    public RequestHashingGatewayFilterFactory() {&#xD;
-        super(Config.class);&#xD;
-    }&#xD;
-&#xD;
-    @Override&#xD;
-    public GatewayFilter apply(Config config) {&#xD;
-        MessageDigest digest = config.getMessageDigest();&#xD;
-        return (exchange, chain) -&amp;gt; ServerWebExchangeUtils&#xD;
-                .cacheRequestBodyAndRequest(exchange, (httpRequest) -&amp;gt; ServerRequest&#xD;
-                    .create(exchange.mutate().request(httpRequest).build(),&#xD;
-                            messageReaders)&#xD;
-                    .bodyToMono(String.class)&#xD;
-                    .doOnNext(requestPayload -&amp;gt; exchange&#xD;
-                            .getAttributes()&#xD;
-                            .put(HASH_ATTR, computeHash(digest, requestPayload)))&#xD;
-                    .then(Mono.defer(() -&amp;gt; {&#xD;
-                        ServerHttpRequest cachedRequest = exchange.getAttribute(&#xD;
-                                CACHED_SERVER_HTTP_REQUEST_DECORATOR_ATTR);&#xD;
-                        Assert.notNull(cachedRequest, &#xD;
-                                &amp;quot;cache request shouldn&amp;#39;t be null&amp;quot;);&#xD;
-                        exchange.getAttributes()&#xD;
-                                .remove(CACHED_SERVER_HTTP_REQUEST_DECORATOR_ATTR);&#xD;
-&#xD;
-                        String hash = exchange.getAttribute(HASH_ATTR);&#xD;
-                        cachedRequest = cachedRequest.mutate()&#xD;
-                                .header(HASH_HEADER, hash)&#xD;
-                                .build();&#xD;
-                        return chain.filter(exchange.mutate()&#xD;
-                                .request(cachedRequest)&#xD;
-                                .build());&#xD;
-                    })));&#xD;
-    }&#xD;
-&#xD;
-    @Override&#xD;
-    public List&amp;lt;String&amp;gt; shortcutFieldOrder() {&#xD;
-        return Collections.singletonList(&amp;quot;algorithm&amp;quot;);&#xD;
-    }&#xD;
-&#xD;
-    private String computeHash(MessageDigest messageDigest, String requestPayload) {&#xD;
-        return Hex.toHexString(messageDigest.digest(requestPayload.getBytes()));&#xD;
-    }&#xD;
-&#xD;
-    static class Config {&#xD;
-&#xD;
-        private MessageDigest messageDigest;&#xD;
-&#xD;
-        public MessageDigest getMessageDigest() {&#xD;
-            return messageDigest;&#xD;
-        }&#xD;
-&#xD;
-        public void setAlgorithm(String algorithm) throws NoSuchAlgorithmException {&#xD;
-            messageDigest = MessageDigest.getInstance(algorithm);&#xD;
-        }&#xD;
-    }&#xD;
-}&#xD;
-
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Let’s take a more detailed look at the code:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;We added the &lt;code&gt;@Component&lt;/code&gt; annotation to the class. Spring Cloud Gateway needs to be able to detect this class in order to use it. Alternatively, we could define an instance with &lt;code&gt;@Bean&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;In our class name, we use &lt;code&gt;GatewayFilterFactory&lt;/code&gt; as a suffix. When adding this filter in the &lt;code&gt;application.yaml&lt;/code&gt; we do not include the suffix, just &lt;code&gt;RequestHashing&lt;/code&gt;. This is a Spring Cloud Gateway filter naming convention.&lt;/li&gt;
-  &lt;li&gt;Our class also extends the &lt;code&gt;AbstractGatewayFilterFactory&lt;/code&gt; similar to all other Spring Cloud Gateway filters. We also specify a class to configure our filter, a nested static class called &lt;code&gt;Config&lt;/code&gt; helps keep things simple. The configuration class allows us to set which hashing algorithm to use.&lt;/li&gt;
-  &lt;li&gt;The overridden &lt;code&gt;apply&lt;/code&gt; method is where all the work takes place. In the parameter, we are given an instance of our configuration class, where we can access the &lt;code&gt;MessageDigest&lt;/code&gt; instance for hashing. Next, we see &lt;code&gt;(exchange, chain)&lt;/code&gt;, a lambda of the &lt;code&gt;GatewayFilter&lt;/code&gt; interface class being returned. The exchange, which is an instance of &lt;code&gt;ServerWebExchange&lt;/code&gt;, provides Gateway filters access to the HTTP request and response. For our case, we want to modify the HTTP request, and this requires us to mutate the exchange.&lt;/li&gt;
-  &lt;li&gt;We need to read the request body to produce the hash, however, as the body is stored in a byte buffer, it can only be read once in the filter. By using &lt;code&gt;ServerWebExchangeUtils&lt;/code&gt; we cache the request as an attribute in the exchange. Attributes provide a way to share data for a particular request across a filter chain. We’ll also store the computed hash of the request body.&lt;/li&gt;
-  &lt;li&gt;We use the exchange attributes to acquire the cached request and the computed hash. We then mutate the exchange by adding the hash header before finally sending it off to the next filter in the chain.&lt;/li&gt;
-  &lt;li&gt;The &lt;code&gt;shortcutFieldOrder&lt;/code&gt; method helps to map the number and order of arguments to the filter. The &lt;code&gt;algorithm&lt;/code&gt; string matches to the setter in the &lt;code&gt;Config&lt;/code&gt; class.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;To test the code, we’ll be using WireMock. Add the dependency to your &lt;code&gt;build.gradle&lt;/code&gt; file:&lt;/p&gt;
-&lt;pre&gt;&lt;code class="prettyprint"&gt;testImplementation &amp;#39;com.github.tomakehurst:wiremock:2.27.2&amp;#39;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Here we have one test checking the presence and value of the header, and another test to check the header is absent if there is no request body:&lt;/p&gt;
-&lt;pre&gt;&lt;code class="prettyprint java"&gt;package com.example.demo;&#xD;
-&#xD;
-import java.security.MessageDigest;&#xD;
-import java.security.NoSuchAlgorithmException;&#xD;
-&#xD;
-import com.github.tomakehurst.wiremock.WireMockServer;&#xD;
-import com.github.tomakehurst.wiremock.client.WireMock;&#xD;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;&#xD;
-import org.bouncycastle.jcajce.provider.digest.SHA512;&#xD;
-import org.bouncycastle.util.encoders.Hex;&#xD;
-import org.junit.jupiter.api.AfterEach;&#xD;
-import org.junit.jupiter.api.Test;&#xD;
-&#xD;
-import org.springframework.beans.factory.annotation.Autowired;&#xD;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;&#xD;
-import org.springframework.boot.test.context.SpringBootTest;&#xD;
-import org.springframework.boot.test.context.TestConfiguration;&#xD;
-import org.springframework.cloud.gateway.filter.GatewayFilter;&#xD;
-import org.springframework.cloud.gateway.route.RouteLocator;&#xD;
-import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;&#xD;
-import org.springframework.context.annotation.Bean;&#xD;
-import org.springframework.http.HttpStatus;&#xD;
-import org.springframework.test.web.reactive.server.WebTestClient;&#xD;
-&#xD;
-import static com.example.demo.RequestHashingGatewayFilterFactory.*;&#xD;
-import static com.example.demo.RequestHashingGatewayFilterFactoryTest.*;&#xD;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;&#xD;
-import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;&#xD;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;&#xD;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;&#xD;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;&#xD;
-&#xD;
-@SpringBootTest(&#xD;
-        webEnvironment = RANDOM_PORT,&#xD;
-        classes = RequestHashingFilterTestConfig.class)&#xD;
-@AutoConfigureWebTestClient&#xD;
-class RequestHashingGatewayFilterFactoryTest {&#xD;
-&#xD;
-    @TestConfiguration&#xD;
-    static class RequestHashingFilterTestConfig {&#xD;
-&#xD;
-        @Autowired&#xD;
-        RequestHashingGatewayFilterFactory requestHashingGatewayFilter;&#xD;
-&#xD;
-        @Bean(destroyMethod = &amp;quot;stop&amp;quot;)&#xD;
-        WireMockServer wireMockServer() {&#xD;
-            WireMockConfiguration options = wireMockConfig().dynamicPort();&#xD;
-            WireMockServer wireMock = new WireMockServer(options);&#xD;
-            wireMock.start();&#xD;
-            return wireMock;&#xD;
-        }&#xD;
-&#xD;
-        @Bean&#xD;
-        RouteLocator testRoutes(RouteLocatorBuilder builder, WireMockServer wireMock)&#xD;
-                throws NoSuchAlgorithmException {&#xD;
-            Config config = new Config();&#xD;
-            config.setAlgorithm(&amp;quot;SHA-512&amp;quot;);&#xD;
-&#xD;
-            GatewayFilter gatewayFilter = requestHashingGatewayFilter.apply(config);&#xD;
-            return builder&#xD;
-                    .routes()&#xD;
-                    .route(predicateSpec -&amp;gt; predicateSpec&#xD;
-                            .path(&amp;quot;/post&amp;quot;)&#xD;
-                            .filters(spec -&amp;gt; spec.filter(gatewayFilter))&#xD;
-                            .uri(wireMock.baseUrl()))&#xD;
-                    .build();&#xD;
-        }&#xD;
-    }&#xD;
-&#xD;
-    @Autowired&#xD;
-    WebTestClient webTestClient;&#xD;
-&#xD;
-    @Autowired&#xD;
-    WireMockServer wireMockServer;&#xD;
-&#xD;
-    @AfterEach&#xD;
-    void afterEach() {&#xD;
-        wireMockServer.resetAll();&#xD;
-    }&#xD;
-&#xD;
-    @Test&#xD;
-    void shouldAddHeaderWithComputedHash() {&#xD;
-        MessageDigest messageDigest = new SHA512.Digest();&#xD;
-        String body = &amp;quot;hello world&amp;quot;;&#xD;
-        String expectedHash = Hex.toHexString(messageDigest.digest(body.getBytes()));&#xD;
-&#xD;
-        wireMockServer.stubFor(WireMock.post(&amp;quot;/post&amp;quot;).willReturn(WireMock.ok()));&#xD;
-&#xD;
-        webTestClient.post().uri(&amp;quot;/post&amp;quot;)&#xD;
-                .bodyValue(body)&#xD;
-                .exchange()&#xD;
-                .expectStatus()&#xD;
-                .isEqualTo(HttpStatus.OK);&#xD;
-&#xD;
-        wireMockServer.verify(postRequestedFor(urlEqualTo(&amp;quot;/post&amp;quot;))&#xD;
-                .withHeader(&amp;quot;X-Hash&amp;quot;, equalTo(expectedHash)));&#xD;
-    }&#xD;
-&#xD;
-    @Test&#xD;
-    void shouldNotAddHeaderIfNoBody() {&#xD;
-        wireMockServer.stubFor(WireMock.post(&amp;quot;/post&amp;quot;).willReturn(WireMock.ok()));&#xD;
-&#xD;
-        webTestClient.post().uri(&amp;quot;/post&amp;quot;)&#xD;
-                .exchange()&#xD;
-                .expectStatus()&#xD;
-                .isEqualTo(HttpStatus.OK);&#xD;
-&#xD;
-        wireMockServer.verify(postRequestedFor(urlEqualTo(&amp;quot;/post&amp;quot;))&#xD;
-                .withoutHeader(&amp;quot;X-Hash&amp;quot;));&#xD;
-    }&#xD;
-}&#xD;
-
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;To use the filter in our gateway, we add the &lt;code&gt;RequestHashing&lt;/code&gt; filter to a route in &lt;code&gt;application.yaml&lt;/code&gt;, using SHA-256 as the algorithm:&lt;/p&gt;
-&lt;pre&gt;&lt;code class="prettyprint yml"&gt;spring:&#xD;
-  cloud:&#xD;
-    gateway:&#xD;
-      routes:&#xD;
-        - id: demo&#xD;
-          uri: https://httpbin.org&#xD;
-          predicates:&#xD;
-            - Path=/post/**&#xD;
-          filters:&#xD;
-            - RequestHashing=SHA-256
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;We’re using &lt;a href="https://httpbin.org"&gt;https://httpbin.org&lt;/a&gt; as it shows our request headers in its returned response. Run the app and make a curl request to see the result:&lt;/p&gt;
-&lt;pre&gt;&lt;code class="prettyprint"&gt;$&amp;gt; curl --request POST &amp;#39;http://localhost:8080/post&amp;#39; \&#xD;
---header &amp;#39;Content-Type: application/json&amp;#39; \&#xD;
---data-raw &amp;#39;{&#xD;
-    &amp;quot;data&amp;quot;: {&#xD;
-        &amp;quot;hello&amp;quot;: &amp;quot;world&amp;quot;&#xD;
-    }&#xD;
-}&amp;#39;&#xD;
-&#xD;
-{&#xD;
-  ...&#xD;
-  &amp;quot;data&amp;quot;: &amp;quot;{\n    \&amp;quot;data\&amp;quot;: {\n        \&amp;quot;hello\&amp;quot;: \&amp;quot;world\&amp;quot;\n    }\n}&amp;quot;,&#xD;
-  &amp;quot;headers&amp;quot;: {&#xD;
-        &amp;quot;Accept&amp;quot;: &amp;quot;*/*&amp;quot;,&#xD;
-        &amp;quot;Accept-Encoding&amp;quot;: &amp;quot;gzip, deflate, br&amp;quot;,&#xD;
-        &amp;quot;Content-Length&amp;quot;: &amp;quot;48&amp;quot;,&#xD;
-        &amp;quot;Content-Type&amp;quot;: &amp;quot;application/json&amp;quot;,&#xD;
-        &amp;quot;Forwarded&amp;quot;: &amp;quot;proto=http;host=\&amp;quot;localhost:8080\&amp;quot;;for=\&amp;quot;[0:0:0:0:0:0:0:1]:55647\&amp;quot;&amp;quot;,&#xD;
-        &amp;quot;Host&amp;quot;: &amp;quot;httpbin.org&amp;quot;,&#xD;
-        &amp;quot;User-Agent&amp;quot;: &amp;quot;PostmanRuntime/7.29.0&amp;quot;,&#xD;
-        &amp;quot;X-Forwarded-Host&amp;quot;: &amp;quot;localhost:8080&amp;quot;,&#xD;
-        &amp;quot;X-Hash&amp;quot;: &amp;quot;1bd93d38735501b5aec7a822f8bc8136d9f1f71a30c2020511bdd5df379772b8&amp;quot;&#xD;
-    },&#xD;
-  ...&#xD;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;In summary, we saw how to write a custom extension for Spring Cloud Gateway. Our filter read the body of the request to produce a hash that we added as a request header. We also wrote tests for the filter using WireMock to check the header value. Finally, we ran a gateway with the filter to verify the result.&lt;/p&gt;
-&lt;p&gt;If you&amp;rsquo;re planning to deploy Spring Cloud Gateway on a Kubernetes cluster, be sure to checkout &lt;a href="https://docs.vmware.com/en/VMware-Spring-Cloud-Gateway-for-Kubernetes/index.html"&gt;VMware Spring Cloud Gateway for Kubernetes&lt;/a&gt;. In addition to supporting open-source Spring Cloud Gateway filters and custom filters, such as the one we wrote above, it comes with &lt;a href="https://docs.vmware.com/en/VMware-Spring-Cloud-Gateway-for-Kubernetes/1.1/scg-k8s/GUID-route-filters.html"&gt;even more built-in filters&lt;/a&gt; to manipulate your request and responses. Spring Cloud Gateway for Kubernetes handles cross-cutting concerns on behalf of API development teams, such as: Single Sign-On (SSO), access control, rate limiting, resiliency, security, and more. &lt;/p&gt;
-&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
-  </entry>
-  <entry>
-    <title>A Bootiful Podcast: Fellow Java Champion and TimescaleDB developer advocate Christoph Engelbert</title>
-    <link rel="alternate" href="https://spring.io/blog/2022/08/25/a-bootiful-podcast-fellow-java-champion-and-timescaledb-developer-advocate-christoph-engelbert" />
-    <category term="engineering" label="Engineering" />
-    <author>
-      <name>Josh Long</name>
-    </author>
-    <id>tag:spring.io,2022-08-25:4893</id>
-    <updated>2022-08-25T07:00:00Z</updated>
-    <content type="html">&lt;p&gt;Hi, Spring fans! In this installment, Josh Long (@starbuxman) talks to fellow Java Champion and TimescaleDB developer advocate Christoph Engelbert (@noctarius2k) about PostgreSQL, Java, time series databases, observability, and so much more. &lt;/p&gt;
-&lt;iframe title="Fellow Java Champion and TimescaleDB developer advocate Christoph Engelbert " allowtransparency="true" height="150" width="100%" style="border: none; min-width: min(100%, 430px);" scrolling="no" data-name="pb-iframe-player" src="https://www.podbean.com/player-v2/?i=i9efu-12aa2ed-pb&amp;from=pb6admin&amp;share=1&amp;download=1&amp;rtl=0&amp;fonts=Arial&amp;skin=1&amp;font-color=&amp;logo_link=episode_page&amp;btn-skin=7"&gt;&lt;/iframe&gt;
-&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
-  </entry>
-  <entry>
-    <title>Spring Batch 5.0.0-M5 is available now!</title>
-    <link rel="alternate" href="https://spring.io/blog/2022/08/24/spring-batch-5-0-0-m5-is-available-now" />
-    <category term="releases" label="Releases" />
-    <author>
-      <name>Mahmoud Ben Hassine</name>
-    </author>
-    <id>tag:spring.io,2022-08-25:4892</id>
-    <updated>2022-08-24T17:01:00Z</updated>
-    <content type="html">&lt;p&gt;I am pleased to announce that Spring Batch &lt;code&gt;5.0.0-M5&lt;/code&gt; is now available from our &lt;a href="https://repo.spring.io/milestone"&gt;milestone repository&lt;/a&gt;. The main theme of this milestone is improving testing support in Spring Batch. This post walks through the major changes in this area as well as other changes introduced in this milestone release. For the complete list of changes, see the &lt;a href="https://github.com/spring-projects/spring-batch/releases/tag/5.0.0-M5"&gt;release notes&lt;/a&gt;.&lt;/p&gt;&lt;h2&gt;&lt;a href="#test-utilities-configuration-updates" class="anchor" name="test-utilities-configuration-updates"&gt;&lt;/a&gt;Test utilities configuration updates&lt;/h2&gt;
-&lt;p&gt;Up to version 4.3, the &lt;code&gt;JobLauncherTestUtils&lt;/code&gt; used to autowire the job under test with the goal of facilitating the test setup. But what if multiple jobs are defined in the test context? And what if no &lt;code&gt;Job&lt;/code&gt; beans are defined at all? So while this autowiring was convenient for most cases, it turned out to cause several issues in the aforementioned situations. In this release, and based on community feedback, we have decided to remove the autowiring of any job in &lt;code&gt;JobLauncherTestUtils&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;Similarly, the &lt;code&gt;JobRepositoryTestUtils&lt;/code&gt; used to autowire a &lt;code&gt;DataSource&lt;/code&gt; from the application context. Again, what if no data source or multiple data sources are defined in the test context? In this version, the &lt;code&gt;JobRepositoryTestUtils&lt;/code&gt; was updated to work against the &lt;code&gt;JobRepository&lt;/code&gt; interface, without having to deal with any implementation details of the repository (such as a data source, for example).&lt;/p&gt;
-&lt;p&gt;If you define those utility beans manually in your test context or import them through &lt;code&gt;@SpringBatchTest&lt;/code&gt;, you would manually set the job under test or the test data source when multiple beans of those types are defined in your test context.&lt;/p&gt;&lt;h2&gt;&lt;a href="#migration-to-junit-jupiter" class="anchor" name="migration-to-junit-jupiter"&gt;&lt;/a&gt;Migration to JUnit Jupiter&lt;/h2&gt;
-&lt;p&gt;In this milestone release, the entire test suite of Spring Batch was migrated to JUnit 5. While this does not impact end users directly, it helps the Batch team as well as community contributors to use the next generation of JUnit to write better tests.&lt;/p&gt;&lt;h2&gt;&lt;a href="#improved-documentation" class="anchor" name="improved-documentation"&gt;&lt;/a&gt;Improved documentation&lt;/h2&gt;
-&lt;p&gt;In this milestone release, the documentation was updated to use the &lt;a href="https://github.com/spring-io/spring-asciidoctor-backends"&gt;Spring Asciidoctor Backend&lt;/a&gt;. This backend ensures that all projects from the portfolio follow the same documentation style. For consistency with other projects, the reference documentation of Spring Batch was updated to use this backend in this release. You can check the new version of the reference documentation &lt;a href="https://docs.spring.io/spring-batch/docs/5.0.0-M5/reference/html/"&gt;here&lt;/a&gt;.&lt;/p&gt;&lt;h2&gt;&lt;a href="#deprecations-and-api-changes" class="anchor" name="deprecations-and-api-changes"&gt;&lt;/a&gt;Deprecations and API changes&lt;/h2&gt;
-&lt;p&gt;This release includes a number of deprecations and API changes.&lt;/p&gt;&lt;h3&gt;&lt;a href="#deprecations" class="anchor" name="deprecations"&gt;&lt;/a&gt;Deprecations&lt;/h3&gt;
-&lt;p&gt;This milestone release introduces the following deprecations:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;The Hibernate (cursor/paging) item reader and item writer were deprecated in favor of using the JPA-based ones.&lt;/li&gt;
-  &lt;li&gt;The &lt;code&gt;org.springframework.batch.test.AssertFile&lt;/code&gt; utility class was deprecated in favor of similar utilities provided by modern test libraries.&lt;/li&gt;
-&lt;/ul&gt;&lt;h3&gt;&lt;a href="#api-changes" class="anchor" name="api-changes"&gt;&lt;/a&gt;API changes&lt;/h3&gt;
-&lt;p&gt;In this release, we introduced a breaking change in the &lt;code&gt;ItemWriter&lt;/code&gt; interface:&lt;/p&gt;
-&lt;pre&gt;&lt;code class="prettyprint"&gt;public interface ItemWriter&amp;lt;T&amp;gt; {&#xD;
-&#xD;
--- void write(List&amp;lt;? extends T&amp;gt; items) throws Exception;&#xD;
-++ void write(Chunk&amp;lt;? extends T&amp;gt; items) throws Exception;&#xD;
-&#xD;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;While this change seems small, we believe it has a huge added value in terms of better encapsulation and consistency in using a coherent language across different areas and APIs of the framework. The &lt;code&gt;ItemWriteListener&lt;/code&gt; API was changed to use the &lt;code&gt;Chunk&lt;/code&gt; API as well.&lt;/p&gt;
-&lt;p&gt;As the &lt;code&gt;Chunk&lt;/code&gt; API implements &lt;code&gt;java.lang.Iterable&lt;/code&gt;, this change does not impact any client code that iterates over the list of items. Moreover, this change does not impact any example that uses a lambda expression to define an &lt;code&gt;ItemWriter&lt;/code&gt;, as the type of the items is inferred. See the &lt;a href="https://github.com/spring-projects/spring-batch/wiki/Spring-Batch-5.0-Migration-Guide"&gt;migration guide&lt;/a&gt; for all details about the changed APIs.&lt;/p&gt;&lt;h2&gt;&lt;a href="#dependencies-upgrades" class="anchor" name="dependencies-upgrades"&gt;&lt;/a&gt;Dependencies upgrades&lt;/h2&gt;
-&lt;p&gt;Major dependencies have been upgraded to the following versions:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Upgrade to Spring Framework 6.0.0-M5&lt;/li&gt;
-  &lt;li&gt;Upgrade to Spring Data 2022.0.0-M5&lt;/li&gt;
-  &lt;li&gt;Upgrade to Spring Integration 6.0.0-M4&lt;/li&gt;
-  &lt;li&gt;Upgrade to Spring AMQP 3.0.0-M3&lt;/li&gt;
-  &lt;li&gt;Upgrade to Spring for Apache Kafka 3.0.0-M5&lt;/li&gt;
-  &lt;li&gt;Upgrade to Micrometer 1.10.0-M4&lt;/li&gt;
-  &lt;li&gt;Upgrade to Hibernate 6.1.2.Final&lt;/li&gt;
-&lt;/ul&gt;&lt;h2&gt;&lt;a href="#feedback" class="anchor" name="feedback"&gt;&lt;/a&gt;Feedback&lt;/h2&gt;
-&lt;p&gt;We would like to thank all contributors who had a role in this release! As we continue our work on Spring Batch 5, we look forward to your feedback on &lt;a href="https://github.com/spring-projects/spring-batch/issues"&gt;Github&lt;/a&gt;, &lt;a href="https://twitter.com/springbatch"&gt;Twitter&lt;/a&gt; and &lt;a href="https://stackoverflow.com/questions/tagged/spring-batch"&gt;StackOverflow&lt;/a&gt;.&lt;/p&gt;
-&lt;hr/&gt;
-&lt;p&gt;&lt;a href="https://spring.io/projects/spring-batch"&gt;Spring Batch Home&lt;/a&gt;|&lt;a href="https://github.com/spring-projects/spring-batch"&gt;Source on Github&lt;/a&gt;|&lt;a href="https://docs.spring.io/spring-batch/docs/5.0.0-M5/reference/html/index-single.html"&gt;Reference documentation&lt;/a&gt;&lt;/p&gt;
-&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
-  </entry>
-  <entry>
-    <title>This Week in Spring - August 23rd, 2022</title>
-    <link rel="alternate" href="https://spring.io/blog/2022/08/23/this-week-in-spring-august-23rd-2022" />
-    <category term="engineering" label="Engineering" />
-    <author>
-      <name>Josh Long</name>
-    </author>
-    <id>tag:spring.io,2022-08-23:4891</id>
-    <updated>2022-08-23T07:00:00Z</updated>
-    <content type="html">&lt;p&gt;Hi, Spring fans! Welcome to another installment of &lt;em&gt;This Week in Spring&lt;/em&gt;! We&amp;rsquo;ve got a &lt;em&gt;ton&lt;/em&gt; to cover, so let&amp;rsquo;s dive right into it!&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/08/18/a-bootiful-podcast-flowable-founder-joram-barrez-on-a-bootiful-podcast-on-workflow-business-process-management-and-more"&gt;A Bootiful Podcast: Flowable founder Joram Barrez on a Bootiful Podcast on workflow, business process management, and more&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://feeds.feedblitz.com/~/707579474/0/baeldung~Building-IoT-Applications-Using-Fauna-and-Spring"&gt;Building IoT Applications Using Fauna and Spring&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://dev.to/mkheck/cosmos-db-for-spring-developers-part-i-using-cosmos-db-as-a-sql-database-28me"&gt;Cosmos DB for Spring Developers, Part I: Using Cosmos DB as a SQL Database&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://paketo.io/docs/howto/web-servers/#build-and-serve-a-frontend-framework-app"&gt;How to Build Web Servers with Paketo Buildpacks - Paketo Buildpacks&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/08/16/introducing-experimental-spring-support-for-apache-pulsar"&gt;Introducing Experimental Spring Support for Apache Pulsar&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://feeds.feedblitz.com/~/706628598/0/baeldung~Propagating-Exceptions-With-OpenFeign-and-Spring"&gt;Propagating Exceptions With OpenFeign and Spring&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/08/17/spring-authorization-server-0-4-0-m1-available-now"&gt;Spring Authorization Server 0.4.0-M1 available now&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/08/17/spring-authorization-server-1-0-0-m1-available-now"&gt;Spring Authorization Server 1.0.0-M1 available now&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/08/17/spring-boot-2-6-11-available-now"&gt;Spring Boot 2.6.11 available now&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/08/18/spring-boot-2-7-3-available-now"&gt;Spring Boot 2.7.3 available now&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://medium.com/@salithachathuranga94/spring-boot-actuator-6f79f93fa1b2"&gt;Spring Boot Actuator&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://github.com/paketo-buildpacks/native-image/issues/176"&gt;Spring Boot Native image builds with 22.2.0 are failing · Issue #176 paketo-buildpacks/native-image&lt;/a&gt; - this is in regards to an issue related to Buildpacks that just appeared last week. There&amp;rsquo;s a workaround that&amp;rsquo;s been recently deployed.&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://www.youtube.com/watch?v=VVn9OG9nfH0"&gt;Spring Boot and Spring Security with JWT including Access and Refresh Tokens &#x1f511;&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://feeds.feedblitz.com/~/707545216/0/baeldung~Spring-JDBC-Batch-Inserts"&gt;Spring JDBC Batch Inserts&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/08/16/spring-security-5-8-0-m2-is-released"&gt;Spring Security 5.8.0-M2 is released&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/08/19/spring-shell-2-1-1-is-now-available"&gt;Spring Shell 2.1.1 is now available&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://medium.com/javarevisited/spring-for-graphql-with-querydsl-9c4964a225d9"&gt;Spring for GraphQL with Querydsl.&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href="https://www.youtube.com/watch?v=1PUshxvTbAc"&gt;Testcontainers and Spring Boot for local development and integration testing &lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
 &lt;!-- rendered by Sagan Renderer Service --&gt;</content>
   </entry>
 </feed>

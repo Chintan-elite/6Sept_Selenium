@@ -14,7 +14,7 @@ public class S003_Grade {
 			System.out.println("Grade A");
 		}
 		else if(marks>70 && marks<=90)
-		{
+		{	
 			System.out.println("Grade B");
 		}
 		else if(marks>50 && marks<=70)

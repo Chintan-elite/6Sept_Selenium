@@ -8,7 +8,6 @@ public class S002_IF_else {
 		int b = 200;
 		int c = 30;
 		
-		
 		if(a>b && a>c)
 		{
 			System.out.println("A is greater");
