@@ -25,4 +25,4 @@ public class A004_2dArray1 {
 		}
 		
 	}
-}
+
