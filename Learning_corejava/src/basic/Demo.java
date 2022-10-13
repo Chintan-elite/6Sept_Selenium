@@ -1,5 +1,7 @@
 package basic;
 
+import oops.O005_AccessModifierDemo;
+
 public class Demo {
 	
 	public static void main(String[] args) {
@@ -29,8 +31,11 @@ public class Demo {
 		System.out.println(x1);
 		
 		
-	
-		
+//		O005_AccessModifierDemo dm = new O005_AccessModifierDemo();
+//		dm.a = 20;
+//		dm.name = "tops";
+//		dm.display();
+//		
 		
 	}
 }

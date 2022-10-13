@@ -1,7 +1,8 @@
 package array;
 
 public class A004_2dArray1 {
-	public static void main(String[] args) {
+	public static void main(String[] args)
+	{
 		
 		
 		String str[][] = new String[3][2];
@@ -17,6 +18,7 @@ public class A004_2dArray1 {
 		
 		
 		for(int i=0;i<3;i++)
+		{
 			for(int j=0;j<2;j++)
 			{
 				System.out.println(str[i][j]);
@@ -25,4 +27,5 @@ public class A004_2dArray1 {
 		}
 		
 	}
+}
 

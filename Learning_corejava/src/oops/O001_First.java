@@ -31,6 +31,11 @@ public class O001_First {
 		
 		Pen p3 = new Pen();
 		p3.toWrite();
+		
+//		O005_AccessModifierDemo dm = new O005_AccessModifierDemo();
+//		dm.a = 20;
+//		dm.name = "tops";
+//		dm.display();
 	}
 }
 

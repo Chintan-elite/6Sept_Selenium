@@ -5,7 +5,1031 @@
   <link rel="self" href="https://spring.io/blog.atom" />
   <id>http://spring.io/blog.atom</id>
   <icon>https://spring.io/favicon.ico</icon>
-  <updated>2022-10-06T20:57:00Z</updated>
+  <updated>2022-10-12T21:00:00Z</updated>
+  <entry>
+    <title>Observability with Spring Boot 3</title>
+    <link rel="alternate" href="https://spring.io/blog/2022/10/12/observability-with-spring-boot-3" />
+    <category term="engineering" label="Engineering" />
+    <author>
+      <name>Marcin Grzejszczak</name>
+    </author>
+    <id>tag:spring.io,2022-10-12:4943</id>
+    <updated>2022-10-12T21:00:00Z</updated>
+    <content type="html">&lt;div class="paragraph"&gt;
+&lt;p&gt;The Spring Observability Team has been working on adding observability support for Spring Applications for quite some time, and we are pleased to inform you that this feature will be generally available with Spring Framework 6 and Spring Boot 3!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;What is observability? In our understanding, it is &lt;em&gt;"how well you can understand the internals of your system by examining its outputs"&lt;/em&gt;. We believe that the interconnection between metrics, logging, and distributed tracing gives you the ability to reason about the state of your system in order to debug exceptions and latency in your applications. You can watch more about what we think observability is in &lt;a href="https://tanzu.vmware.com/developer/tv/enlightning/10/"&gt;this episode of Enlightning with Jonatan Ivanov&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;The upcoming Spring Boot &lt;code&gt;3.0.0-RC1&lt;/code&gt; release will contain numerous autoconfigurations for improved metrics with &lt;a href="https://micrometer.io/"&gt;Micrometer&lt;/a&gt; and new distributed tracing support with &lt;a href="https://micrometer.io/docs/tracing"&gt;Micrometer Tracing&lt;/a&gt; (formerly &lt;a href="https://spring.io/projects/spring-cloud-sleuth"&gt;Spring Cloud Sleuth&lt;/a&gt;). The most notable changes are that it will contain built-in support for log correlation, &lt;a href="https://www.w3.org/TR/trace-context/"&gt;W3C context propagation&lt;/a&gt; will be the default propagation type, and we will support automatic propagation of metadata to be used by the tracing infrastructure (called "remote baggage") that helps to label the observations.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;We have been changing the Micrometer API a lot over the course of this year. The most important change is that we have introduced a new API: the Observation API.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="quoteblock"&gt;
+&lt;blockquote&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;The idea of its founding was that we want the users to instrument their code once using a single API and have multiple benefits out of it (e.g. metrics, tracing, logging).&lt;/p&gt;
+&lt;/div&gt;
+&lt;/blockquote&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;This blog post details what you need to know to about that API and how you can use it to provide more insights into your application.&lt;/p&gt;
+&lt;/div&gt;
+&lt;h1 id="how-does-micrometer-observation-work" class="sect0"&gt;&lt;a class="anchor" href="#how-does-micrometer-observation-work"&gt;&lt;/a&gt;How Does Micrometer Observation Work?&lt;/h1&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;For any observation to happen, you need to register &lt;code&gt;ObservationHandler&lt;/code&gt; objects through an &lt;code&gt;ObservationRegistry&lt;/code&gt;. An &lt;code&gt;ObservationHandler&lt;/code&gt; reacts only to supported implementations of an &lt;code&gt;Observation.Context&lt;/code&gt; and can create, for example, timers, spans, and logs by reacting to the lifecycle events of an observation, such as:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="ulist"&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;start&lt;/code&gt; - Observation has been started. Happens when the &lt;code&gt;Observation#start()&lt;/code&gt; method gets called.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;stop&lt;/code&gt; - Observation has been stopped. Happens when the &lt;code&gt;Observation#stop()&lt;/code&gt; method gets called.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;error&lt;/code&gt; - An error occurred while observing. Happens when the &lt;code&gt;Observation#error(exception)&lt;/code&gt; method gets called.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;event&lt;/code&gt; - An event happened when observing. Happens when the &lt;code&gt;Observation#event(event)&lt;/code&gt; method gets called.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;scope started&lt;/code&gt; - Observation opens a scope. The scope must be closed when no longer used. Handlers can create thread local variables on start that are cleared upon closing of the scope. Happens when the &lt;code&gt;Observation#openScope()&lt;/code&gt; method gets called.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;scope stopped&lt;/code&gt; - Observation stops a scope. Happens when the &lt;code&gt;Observation.Scope#close()&lt;/code&gt; method gets called.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Whenever any of these methods is called, an &lt;code&gt;ObservationHandler&lt;/code&gt; method (such as &lt;code&gt;onStart(T extends Observation.Context ctx)&lt;/code&gt;, &lt;code&gt;onStop(T extends Observation.Context ctx)&lt;/code&gt;, and so on) are called. To pass state between the handler methods, you can use the &lt;code&gt;Observation.Context&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;The observation state diagram looks like this:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="content"&gt;
+&lt;pre class="prettyprint highlight"&gt;&lt;code&gt;        Observation           Observation
+        Context               Context
+Created ----------&amp;gt; Started ----------&amp;gt; Stopped&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;The observation Scope state diagram looks like this:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="content"&gt;
+&lt;pre class="prettyprint highlight"&gt;&lt;code&gt;              Observation
+              Context
+Scope Started ----------&amp;gt; Scope Closed&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;To make it possible to debug production problems, an observation needs additional metadata, such as key-value pairs (also known as tags). You can then query your metrics or distributed tracing backend by using those tags to find the required data. Tags can be of either high or low cardinality.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;This is an example of the Micrometer Observation API.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="content"&gt;
+&lt;pre class="prettyprint highlight"&gt;&lt;code data-lang="java"&gt;// Create an ObservationRegistry
+ObservationRegistry registry = ObservationRegistry.create();
+// Register an ObservationHandler
+registry.observationConfig().observationHandler(new MyHandler());
+
+// Create an Observation and observe your code!
+Observation.createNotStarted("user.name", registry)
+        .contextualName("getting-user-name")
+        .lowCardinalityKeyValue("userType", "userType1") // let's assume that you can have 3 user types
+        .highCardinalityKeyValue("userId", "1234") // let's assume that this is an arbitrary number
+        .observe(() -&amp;gt; log.info("Hello")); // this is a shortcut for starting an observation, opening a scope, running user's code, closing the scope and stopping the observation&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="admonitionblock important"&gt;
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td class="icon"&gt;
+&lt;div class="title"&gt;Important&lt;/div&gt;
+&lt;/td&gt;
+&lt;td class="content"&gt;
+&lt;strong&gt;High cardinality&lt;/strong&gt; means that a pair will have an unbounded number of possible values. An HTTP URL is a good
+example of such a key value (for example, &lt;code&gt;/user/user1234&lt;/code&gt;, &lt;code&gt;/user/user2345&lt;/code&gt;, and so on). &lt;strong&gt;Low cardinality&lt;/strong&gt; means that a key value will  have a bounded number of possible values. A &lt;strong&gt;templated&lt;/strong&gt; HTTP URL (such as &lt;code&gt;/user/{userId}&lt;/code&gt;) is a good example of such a key value.
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;To separate observation lifecycle operations from an observation configuration (such as names and low and high cardinality tags), you can use the &lt;code&gt;ObservationConvention&lt;/code&gt; that provides an easy way of overriding the default naming conventions.&lt;/p&gt;
+&lt;/div&gt;
+&lt;h1 id="building-your-first-observed-application" class="sect0"&gt;&lt;a class="anchor" href="#building-your-first-observed-application"&gt;&lt;/a&gt;Building Your First Observed Application&lt;/h1&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;The easiest way to get started is to create a new project from &lt;a href="https://start.spring.io" class="bare"&gt;https://start.spring.io&lt;/a&gt;. Make sure to select Spring Boot 3.0.0-SNAPSHOT (you can switch to RC1 once &lt;a href="https://calendar.spring.io/"&gt;it&amp;#8217;s available&lt;/a&gt;) and your favorite build tool.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;We will build a Spring WebMvc server application and a client to call the server using RestTemplate. We start with the server side.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="sect1"&gt;
+&lt;h2 id="webmvc-server-setup"&gt;&lt;a class="anchor" href="#webmvc-server-setup"&gt;&lt;/a&gt;WebMvc Server Setup&lt;/h2&gt;
+&lt;div class="sectionbody"&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Since we want to start an HTTP server, we have to pick the &lt;code&gt;org.springframework.boot:spring-boot-starter-web&lt;/code&gt; dependency.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;To create observations by using the &lt;code&gt;@Observed&lt;/code&gt; aspect, we need to add the &lt;code&gt;org.springframework.boot:spring-boot-starter-aop&lt;/code&gt; dependency.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;To add observation features to your application, choose &lt;code&gt;spring-boot-starter-actuator&lt;/code&gt; (to add &lt;a href="https://micrometer.io"&gt;Micrometer&lt;/a&gt; to the classpath).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Now it is time to add observability related features!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="ulist"&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Metrics&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="ulist"&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;For Micrometer metrics with Prometheus, we need to add the &lt;code&gt;io.micrometer:micrometer-registry-prometheus&lt;/code&gt; dependency.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Tracing&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="ulist"&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;For &lt;strong&gt;Tracing Context Propagation&lt;/strong&gt; with Micrometer Tracing, we need to pick a &lt;strong&gt;tracer&lt;/strong&gt; bridge (&lt;strong&gt;tracer&lt;/strong&gt; is a library that is used to handle the lifecycle of a span). We pick &lt;a href="https://zipkin.io"&gt;Zipkin Brave&lt;/a&gt; by adding the &lt;code&gt;io.micrometer:micrometer-tracing-bridge-brave&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="ulist"&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;The client application that we will create for this demo will use another tracer library to show an interop between tracers.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;For &lt;strong&gt;Latency Visualization&lt;/strong&gt;, we need to send the finished spans in some format to a server. In our case, we produce an Zipkin-compliant span. To achieve that, we need to add the &lt;code&gt;io.zipkin.reporter2:zipkin-reporter-brave&lt;/code&gt; dependency.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Logs&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="ulist"&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Since we have Micrometer Tracing on the classpath, the logs are automatically correlated (that is, they contain a unique trace identifier). Now we need to ship the logs. For this demo, we ship them to &lt;a href="https://grafana.com/oss/loki/"&gt;Grafana Loki&lt;/a&gt;. We can achieve that by adding the &lt;code&gt;com.github.loki4j:loki-logback-appender:latest.release&lt;/code&gt; dependency.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class="admonitionblock important"&gt;
+&lt;table&gt;
+&lt;tr&gt;
+&lt;td class="icon"&gt;
+&lt;div class="title"&gt;Important&lt;/div&gt;
+&lt;/td&gt;
+&lt;td class="content"&gt;
+If you are new to tracing, we need to quickly define a couple of basic terms. You can wrap any operation in a &lt;code&gt;span&lt;/code&gt;. It has a unique &lt;code&gt;span id&lt;/code&gt; and contains timing information and some additional metadata (key-value pairs). Because you can produce child spans from spans, the whole tree of spans forms a &lt;code&gt;trace&lt;/code&gt; that shares the same &lt;code&gt;trace id&lt;/code&gt; (that is, a correlation identifier).
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Now we need to add some configuration. We set up &lt;code&gt;actuator&lt;/code&gt; and &lt;code&gt;metrics&lt;/code&gt; to publish percentiles histograms, and we redefine the logging pattern to include the trace and span identifiers. We set the sampling probability to &lt;code&gt;1.0&lt;/code&gt; to send all traces to latency analysis tool.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="title"&gt;/src/main/resources/application.properties&lt;/div&gt;
+&lt;div class="content"&gt;
+&lt;pre class="prettyprint highlight"&gt;&lt;code data-lang="properties"&gt;server.port=7654
+spring.application.name=server
+
+# All traces should be sent to latency analysis tool
+management.tracing.sampling.probability=1.0
+management.endpoints.web.exposure.include=prometheus
+
+# For Exemplars to work we need histogram buckets
+management.metrics.distribution.percentiles-histogram.http.server.requests=true
+
+# traceID and spanId are predefined MDC keys - we want the logs to include them
+logging.pattern.level=%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Since we are running the &lt;a href="https://grafana.com/grafana/"&gt;Grafana&lt;/a&gt; stack with &lt;a href="https://grafana.com/oss/loki/"&gt;Loki&lt;/a&gt; and &lt;a href="https://grafana.com/oss/tempo/"&gt;Tempo&lt;/a&gt; locally, we configure the &lt;code&gt;loki-logback-appender&lt;/code&gt; to send logs to the local instance of Loki.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="title"&gt;/src/main/resources/logback-spring.xml&lt;/div&gt;
+&lt;div class="content"&gt;
+&lt;pre class="prettyprint highlight"&gt;&lt;code data-lang="xml"&gt;&amp;lt;?xml version="1.0" encoding="UTF-8"?&amp;gt;
+&amp;lt;configuration&amp;gt;
+    &amp;lt;include resource="org/springframework/boot/logging/logback/base.xml" /&amp;gt;
+    &amp;lt;springProperty scope="context" name="appName" source="spring.application.name"/&amp;gt;
+
+    &amp;lt;appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender"&amp;gt;
+        &amp;lt;http&amp;gt;
+            &amp;lt;url&amp;gt;http://localhost:3100/loki/api/v1/push&amp;lt;/url&amp;gt;
+        &amp;lt;/http&amp;gt;
+        &amp;lt;format&amp;gt;
+            &amp;lt;label&amp;gt;
+                &amp;lt;pattern&amp;gt;app=${appName},host=${HOSTNAME},traceID=%X{traceId:-NONE},level=%level&amp;lt;/pattern&amp;gt;
+            &amp;lt;/label&amp;gt;
+            &amp;lt;message&amp;gt;
+                &amp;lt;pattern&amp;gt;${FILE_LOG_PATTERN}&amp;lt;/pattern&amp;gt;
+            &amp;lt;/message&amp;gt;
+            &amp;lt;sortByTime&amp;gt;true&amp;lt;/sortByTime&amp;gt;
+        &amp;lt;/format&amp;gt;
+    &amp;lt;/appender&amp;gt;
+
+    &amp;lt;root level="INFO"&amp;gt;
+        &amp;lt;appender-ref ref="LOKI"/&amp;gt;
+    &amp;lt;/root&amp;gt;
+&amp;lt;/configuration&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="sect1"&gt;
+&lt;h2 id="webmvc-server-code"&gt;&lt;a class="anchor" href="#webmvc-server-code"&gt;&lt;/a&gt;WebMvc Server Code&lt;/h2&gt;
+&lt;div class="sectionbody"&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Time to write some server-side code! We want to achieve full observability of our application, including metrics, tracing, and additional logging.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;To begin with, we write a controller that logs a message to the console and delegate work to a service.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="title"&gt;MyController.java&lt;/div&gt;
+&lt;div class="content"&gt;
+&lt;pre class="prettyprint highlight"&gt;&lt;code data-lang="java"&gt;@RestController
+class MyController {
+
+    private static final Logger log = LoggerFactory.getLogger(MyController.class);
+    private final MyUserService myUserService;
+
+    MyController(MyUserService myUserService) {
+        this.myUserService = myUserService;
+    }
+
+    @GetMapping("/user/{userId}")
+    String userName(@PathVariable("userId") String userId) {
+        log.info("Got a request");
+        return myUserService.userName(userId);
+    }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;We want to have some detailed observation of the &lt;code&gt;MyUserService#userName&lt;/code&gt; method. Thanks to having added AOP support, we can use the &lt;code&gt;@Observed&lt;/code&gt; annotation. To do so, we can register a &lt;code&gt;ObservedAspect&lt;/code&gt; bean.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="title"&gt;MyConfiguration.java&lt;/div&gt;
+&lt;div class="content"&gt;
+&lt;pre class="prettyprint highlight"&gt;&lt;code data-lang="java"&gt;@Configuration(proxyBeanMethods = false)
+class MyConfiguration {
+    // To have the @Observed support we need to register this aspect
+    @Bean
+    ObservedAspect observedAspect(ObservationRegistry observationRegistry) {
+        return new ObservedAspect(observationRegistry);
+    }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="title"&gt;MyUserService.java&lt;/div&gt;
+&lt;div class="content"&gt;
+&lt;pre class="prettyprint highlight"&gt;&lt;code data-lang="java"&gt;@Service
+class MyUserService {
+
+    private static final Logger log = LoggerFactory.getLogger(MyUserService.class);
+
+    private final Random random = new Random();
+
+    // Example of using an annotation to observe methods
+    // &amp;lt;user.name&amp;gt; will be used as a metric name
+    // &amp;lt;getting-user-name&amp;gt; will be used as a span  name
+    // &amp;lt;userType=userType2&amp;gt; will be set as a tag for both metric &amp;amp; span
+    @Observed(name = "user.name",
+            contextualName = "getting-user-name",
+            lowCardinalityKeyValues = {"userType", "userType2"})
+    String userName(String userId) {
+        log.info("Getting user name for user with id &amp;lt;{}&amp;gt;", userId);
+        try {
+            Thread.sleep(random.nextLong(200L)); // simulates latency
+        }
+        catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return "foo";
+    }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;With metrics and tracing on the classpath, having this annotation leads to the creation of a &lt;code&gt;timer&lt;/code&gt;, a &lt;code&gt;long task timer&lt;/code&gt;, and a &lt;code&gt;span&lt;/code&gt;. The timer would be named &lt;code&gt;user.name&lt;/code&gt;, the long task timer would be named &lt;code&gt;user.name.active&lt;/code&gt;, and the span would be named &lt;code&gt;getting-user-name&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;What about logs? We do not want to write the logging statements manually whenever an observation takes place. What we can do is to create a dedicated handler that logs some text for each observation.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="title"&gt;MyHandler.java&lt;/div&gt;
+&lt;div class="content"&gt;
+&lt;pre class="prettyprint highlight"&gt;&lt;code data-lang="java"&gt;// Example of plugging in a custom handler that in this case will print a statement before and after all observations take place
+@Component
+class MyHandler implements ObservationHandler&amp;lt;Observation.Context&amp;gt; {
+
+    private static final Logger log = LoggerFactory.getLogger(MyHandler.class);
+
+    @Override
+    public void onStart(Observation.Context context) {
+        log.info("Before running the observation for context [{}], userType [{}]", context.getName(), getUserTypeFromContext(context));
+    }
+
+    @Override
+    public void onStop(Observation.Context context) {
+        log.info("After running the observation for context [{}], userType [{}]", context.getName(), getUserTypeFromContext(context));
+    }
+
+    @Override
+    public boolean supportsContext(Observation.Context context) {
+        return true;
+    }
+
+    private String getUserTypeFromContext(Observation.Context context) {
+        return StreamSupport.stream(context.getLowCardinalityKeyValues().spliterator(), false)
+                .filter(keyValue -&amp;gt; "userType".equals(keyValue.getKey()))
+                .map(KeyValue::getValue)
+                .findFirst()
+                .orElse("UNKNOWN");
+    }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;You might wonder what you should do to have the observability turned on for the controllers. You can register one bean and be ready to go. Once &lt;a href="https://github.com/spring-projects/spring-boot/issues/32538"&gt;this issue&lt;/a&gt; is fixed, this configuration will not need to be manually defined.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="title"&gt;MyConfiguration.java&lt;/div&gt;
+&lt;div class="content"&gt;
+&lt;pre class="prettyprint highlight"&gt;&lt;code data-lang="java"&gt;@Configuration(proxyBeanMethods = false)
+class MyConfiguration {
+    // You must set this manually until this is registered in Boot
+    @Bean
+    FilterRegistrationBean observationWebFilter(ObservationRegistry observationRegistry) {
+        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean(new HttpRequestsObservationFilter(observationRegistry));
+        filterRegistrationBean.setDispatcherTypes(DispatcherType.ASYNC, DispatcherType.ERROR, DispatcherType.FORWARD,
+                DispatcherType.INCLUDE, DispatcherType.REQUEST);
+        filterRegistrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        // We provide a list of URLs that we want to create observations for
+        filterRegistrationBean.setUrlPatterns(Collections.singletonList("/user/*"));
+        return filterRegistrationBean;
+    }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;That is it! Time for the client side.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="sect1"&gt;
+&lt;h2 id="resttemplate-client-application-setup"&gt;&lt;a class="anchor" href="#resttemplate-client-application-setup"&gt;&lt;/a&gt;RestTemplate Client Application Setup&lt;/h2&gt;
+&lt;div class="sectionbody"&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;As before, we add the &lt;code&gt;spring-boot-starter-web&lt;/code&gt; and &lt;code&gt;spring-boot-starter-actuator&lt;/code&gt; dependencies to have a web server running and Micrometer support added.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Time to add observability related features!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="ulist"&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Metrics&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="ulist"&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;For Micrometer metrics with Prometheus, we need to add the &lt;code&gt;io.micrometer:micrometer-registry-prometheus&lt;/code&gt; dependency.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Tracing&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="ulist"&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;For &lt;strong&gt;Tracing Context Propagation&lt;/strong&gt; with Micrometer Tracing, we need to pick a &lt;strong&gt;tracer&lt;/strong&gt; bridge. We pick &lt;a href="https://opentelemetry.io"&gt;OpenTelemetry&lt;/a&gt; by adding the &lt;code&gt;io.micrometer:micrometer-tracing-bridge-otel&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;For &lt;strong&gt;Latency Visualization&lt;/strong&gt;, we need to send the finished spans in some format to a server. In our case, we produce an OpenZipkin compliant span. To achieve that, we need to add the &lt;code&gt;io.opentelemetry:opentelemetry-exporter-zipkin&lt;/code&gt; dependency.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Logs&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="ulist"&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;As previously, we add the &lt;code&gt;com.github.loki4j:loki-logback-appender:latest.release&lt;/code&gt; dependency to ship logs to Loki.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Now we need to add some configuration. We add almost identical configuration as we did on the server side.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="title"&gt;/src/main/resources/application.properties&lt;/div&gt;
+&lt;div class="content"&gt;
+&lt;pre class="prettyprint highlight"&gt;&lt;code data-lang="properties"&gt;server.port=6543
+spring.application.name=client
+
+# All traces should be sent to latency analysis tool
+management.tracing.sampling.probability=1.0
+management.endpoints.web.exposure.include=prometheus
+
+# traceID and spanId are predefined MDC keys - we want the logs to include them
+logging.pattern.level=%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;The Loki Appender configuration looks exactly the same.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="title"&gt;/src/main/resources/logback-spring.xml&lt;/div&gt;
+&lt;div class="content"&gt;
+&lt;pre class="prettyprint highlight"&gt;&lt;code data-lang="xml"&gt;&amp;lt;?xml version="1.0" encoding="UTF-8"?&amp;gt;
+&amp;lt;configuration&amp;gt;
+    &amp;lt;include resource="org/springframework/boot/logging/logback/base.xml" /&amp;gt;
+    &amp;lt;springProperty scope="context" name="appName" source="spring.application.name"/&amp;gt;
+
+    &amp;lt;appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender"&amp;gt;
+        &amp;lt;http&amp;gt;
+            &amp;lt;url&amp;gt;http://localhost:3100/loki/api/v1/push&amp;lt;/url&amp;gt;
+        &amp;lt;/http&amp;gt;
+        &amp;lt;format&amp;gt;
+            &amp;lt;label&amp;gt;
+                &amp;lt;pattern&amp;gt;app=${appName},host=${HOSTNAME},traceID=%X{traceId:-NONE},level=%level&amp;lt;/pattern&amp;gt;
+            &amp;lt;/label&amp;gt;
+            &amp;lt;message&amp;gt;
+                &amp;lt;pattern&amp;gt;${FILE_LOG_PATTERN}&amp;lt;/pattern&amp;gt;
+            &amp;lt;/message&amp;gt;
+            &amp;lt;sortByTime&amp;gt;true&amp;lt;/sortByTime&amp;gt;
+        &amp;lt;/format&amp;gt;
+    &amp;lt;/appender&amp;gt;
+
+    &amp;lt;root level="INFO"&amp;gt;
+        &amp;lt;appender-ref ref="LOKI"/&amp;gt;
+    &amp;lt;/root&amp;gt;
+&amp;lt;/configuration&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="sect1"&gt;
+&lt;h2 id="resttemplate-application-client-code"&gt;&lt;a class="anchor" href="#resttemplate-application-client-code"&gt;&lt;/a&gt;RestTemplate Application Client Code&lt;/h2&gt;
+&lt;div class="sectionbody"&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Now it is time to write some client-side code! We send a request with &lt;code&gt;RestTemplate&lt;/code&gt; to the server side, and we want to achieve the full observability of our application, including metrics and tracing.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;To begin, we need a &lt;code&gt;RestTemplate&lt;/code&gt; bean that is automatically instrumented by Spring Boot. Remember to inject the &lt;code&gt;RestTemplateBuilder&lt;/code&gt; and to construct a &lt;code&gt;RestTemplate&lt;/code&gt; instance from the builder.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="title"&gt;MyConfiguration.java&lt;/div&gt;
+&lt;div class="content"&gt;
+&lt;pre class="prettyprint highlight"&gt;&lt;code data-lang="java"&gt;@Configuration(proxyBeanMethods = false)
+class MyConfiguration {
+    // IMPORTANT! To instrument RestTemplate you must inject the RestTemplateBuilder
+    @Bean
+    RestTemplate restTemplate(RestTemplateBuilder builder) {
+        return builder.build();
+    }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Now we can write a &lt;code&gt;CommandLineRunner&lt;/code&gt; bean that is wrapped by using the Observation API and that sends a request to the server side. All parts of the API are described in more detail in the following snippet.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="title"&gt;MyConfiguration.java&lt;/div&gt;
+&lt;div class="content"&gt;
+&lt;pre class="prettyprint highlight"&gt;&lt;code data-lang="java"&gt;@Configuration(proxyBeanMethods = false)
+class MyConfiguration {
+    @Bean
+    CommandLineRunner myCommandLineRunner(ObservationRegistry registry, RestTemplate restTemplate) {
+        Random highCardinalityValues = new Random(); // Simulates potentially large number of values
+        List&amp;lt;String&amp;gt; lowCardinalityValues = Arrays.asList("userType1", "userType2", "userType3"); // Simulates low number of values
+        return args -&amp;gt; {
+            String highCardinalityUserId = String.valueOf(highCardinalityValues.nextLong(100_000));
+            // Example of using the Observability API manually
+            // &amp;lt;my.observation&amp;gt; is a "technical" name that does not depend on the context. It will be used to name e.g. Metrics
+             Observation.createNotStarted("my.observation", registry)
+                     // Low cardinality means that the number of potential values won't be big. Low cardinality entries will end up in e.g. Metrics
+                    .lowCardinalityKeyValue("userType", randomUserTypePicker(lowCardinalityValues))
+                     // High cardinality means that the number of potential values can be large. High cardinality entries will end up in e.g. Spans
+                    .highCardinalityKeyValue("userId", highCardinalityUserId)
+                     // &amp;lt;command-line-runner&amp;gt; is a "contextual" name that gives more details within the provided context. It will be used to name e.g. Spans
+                    .contextualName("command-line-runner")
+                     // The following lambda will be executed with an observation scope (e.g. all the MDC entries will be populated with tracing information). Also the observation will be started, stopped and if an error occurred it will be recorded on the observation
+                    .observe(() -&amp;gt; {
+                        log.info("Will send a request to the server"); // Since we're in an observation scope - this log line will contain tracing MDC entries ...
+                        String response = restTemplate.getForObject("http://localhost:7654/user/{userId}", String.class, highCardinalityUserId); // Boot's RestTemplate instrumentation creates a child span here
+                        log.info("Got response [{}]", response); // ... so will this line
+                    });
+
+        };
+    }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="sect2"&gt;
+&lt;h3 id="limitations"&gt;&lt;a class="anchor" href="#limitations"&gt;&lt;/a&gt;Limitations&lt;/h3&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;The Spring Boot AutoConfiguration for WebMvc Observability is not yet ready. As a result, we need to set things up manually. For more information, see this &lt;a href="https://github.com/spring-projects/spring-boot/issues/32538"&gt;issue&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;For the Spring Boot &lt;a href="https://grafana.com/docs/grafana/latest/basics/exemplars/"&gt;Exemplars&lt;/a&gt; AutoConfiguration to work properly, we need to wait for &lt;a href="https://github.com/spring-projects/spring-boot/pull/32399"&gt;this PR&lt;/a&gt; and &lt;a href="https://github.com/spring-projects/spring-boot/pull/32415"&gt;this PR&lt;/a&gt; to be merged. Until then, we need to create &lt;a href="https://github.com/marcingrzejszczak/observability-boot-blog-post/blob/main/server/src/main/java/com/example/server/ExemplarsConfiguration.java"&gt;our configuration&lt;/a&gt; manually.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="sect1"&gt;
+&lt;h2 id="running-it-all-together"&gt;&lt;a class="anchor" href="#running-it-all-together"&gt;&lt;/a&gt;Running It All Together&lt;/h2&gt;
+&lt;div class="sectionbody"&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;We have prepared a Docker setup of the whole observability infrastructure under &lt;a href="https://github.com/marcingrzejszczak/observability-boot-blog-post"&gt;this link&lt;/a&gt;. Follow these steps to run the infrastructure and both applications.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="sect2"&gt;
+&lt;h3 id="running-the-samples"&gt;&lt;a class="anchor" href="#running-the-samples"&gt;&lt;/a&gt;Running the samples&lt;/h3&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;To run the samples:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="olist arabic"&gt;
+&lt;ol class="arabic"&gt;
+&lt;li&gt;
+&lt;p&gt;Start up the observability stack (for demonstration purposes, you can use the provided Grafana, Tempo, and Loki stack) and wait for it to start.&lt;/p&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="content"&gt;
+&lt;pre class="prettyprint highlight"&gt;&lt;code data-lang="bash"&gt;$ docker compose up&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="ulist"&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;To access Prometheus go to &lt;a href="http://localhost:9090/" class="bare"&gt;http://localhost:9090/&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;To access Grafana go to &lt;a href="http://localhost:3000/" class="bare"&gt;http://localhost:3000/&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Run the server side application (this will block your current terminal window).&lt;/p&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="content"&gt;
+&lt;pre class="prettyprint highlight"&gt;&lt;code data-lang="bash"&gt;$ ./mvnw spring-boot:run -pl :server&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Run the client side application (this will block your current terminal window)&lt;/p&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="content"&gt;
+&lt;pre class="prettyprint highlight"&gt;&lt;code data-lang="bash"&gt;$ ./mvnw spring-boot:run -pl :client&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;You should see log statements similar to these:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="content"&gt;
+&lt;pre class="prettyprint highlight"&gt;&lt;code&gt;2022-10-04T15:04:55.345+02:00  INFO [client,bbe3aea006077640b66d40f3e62f04b9,93b7a150b7e293ef] 92556 --- [           main] com.example.client.ClientApplication     : Will send a request to the server
+2022-10-04T15:04:55.385+02:00  INFO [client,bbe3aea006077640b66d40f3e62f04b9,93b7a150b7e293ef] 92556 --- [           main] com.example.client.ClientApplication     : Got response [foo]&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Go to &lt;a href="http://localhost:3000/"&gt;Grafana&lt;/a&gt;, go to dashboards, and click on the &lt;code&gt;Logs, Traces, Metrics&lt;/code&gt; dashboard. There you can pick a trace ID value (for example, &lt;code&gt;bbe3aea006077640b66d40f3e62f04b9&lt;/code&gt;) to find all logs and traces from both applications that correspond to that trace ID. You should see a following correlated view of logs and traces related to the same trace identifier, and you will see metrics taking place at the same time range. The metrics are related to HTTP request processing latency. These come from the automated Spring Boot WebMvc instrumentation that uses the Micrometer API.&lt;/p&gt;
+&lt;div class="imageblock"&gt;
+&lt;div class="content"&gt;
+&lt;img src="https://raw.githubusercontent.com/marcingrzejszczak/observability-boot-blog-post/main/docs/src/main/asciidoc/img/logs-metrics-traces.png" alt="logs metrics traces"&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Notice a diamond shape in the metrics. These are &lt;a href="https://grafana.com/docs/grafana/latest/basics/exemplars/"&gt;&lt;code&gt;Exemplars&lt;/code&gt;&lt;/a&gt;. Those are &amp;#8220;specific trace representative of measurement taken in a given time interval&amp;#8221;. If you click on the shape, you can jump to the trace ID view to see the corresponding trace.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="imageblock"&gt;
+&lt;div class="content"&gt;
+&lt;img src="https://raw.githubusercontent.com/marcingrzejszczak/observability-boot-blog-post/main/docs/src/main/asciidoc/img/exemplar.png" alt="exemplar"&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Either click on the trace ID to &lt;code&gt;Query it with Tempo&lt;/code&gt; or go to Tempo and pick the trace identifier yourself. You will see the following screen.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div class="imageblock"&gt;
+&lt;div class="content"&gt;
+&lt;img src="https://raw.githubusercontent.com/marcingrzejszczak/observability-boot-blog-post/main/docs/src/main/asciidoc/img/trace-view.png" alt="trace view"&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Each bar represents a &lt;code&gt;span&lt;/code&gt;. You can see how much time it took for each operation to complete. If you click on a given span, you can see tags (key-value metadata) and timing information related to that particular operation.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="imageblock"&gt;
+&lt;div class="content"&gt;
+&lt;img src="https://raw.githubusercontent.com/marcingrzejszczak/observability-boot-blog-post/main/docs/src/main/asciidoc/img/span-tags.png" alt="span tags"&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;This is how the correlated logs view would look in Loki.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="imageblock"&gt;
+&lt;div class="content"&gt;
+&lt;img src="https://raw.githubusercontent.com/marcingrzejszczak/observability-boot-blog-post/main/docs/src/main/asciidoc/img/correlated-logs.png" alt="correlated logs"&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;If you want to see the &lt;code&gt;@Observed&lt;/code&gt; annotated method metrics, you can go to the &lt;code&gt;Prometheus&lt;/code&gt; view and find the &lt;code&gt;user_name&lt;/code&gt; Timer.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="imageblock"&gt;
+&lt;div class="content"&gt;
+&lt;img src="https://raw.githubusercontent.com/marcingrzejszczak/observability-boot-blog-post/main/docs/src/main/asciidoc/img/annotation-metric.png" alt="annotation metric"&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;If you want to see the metrics from your Observation that you have manually created, go to the &lt;code&gt;Prometheus&lt;/code&gt; view and find the &lt;code&gt;my_observation&lt;/code&gt; Timer.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="imageblock"&gt;
+&lt;div class="content"&gt;
+&lt;img src="https://raw.githubusercontent.com/marcingrzejszczak/observability-boot-blog-post/main/docs/src/main/asciidoc/img/my-observation.png" alt="my observation"&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="sect1"&gt;
+&lt;h2 id="running-it-all-together-with-aot-support"&gt;&lt;a class="anchor" href="#running-it-all-together-with-aot-support"&gt;&lt;/a&gt;Running It All Together with AOT Support&lt;/h2&gt;
+&lt;div class="sectionbody"&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;To better understand how Spring Boot supports Native, please read &lt;a href="https://spring.io/blog/2022/09/26/native-support-in-spring-boot-3-0-0-m5"&gt;this excellent blog post&lt;/a&gt;. We reuse that knowledge to run the previously created applications using Spring Native.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="sect2"&gt;
+&lt;h3 id="building"&gt;&lt;a class="anchor" href="#building"&gt;&lt;/a&gt;Building&lt;/h3&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;To build the applications, you need GraalVM on your path. If you use &lt;code&gt;SDKMan&lt;/code&gt;, invoke the following:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="content"&gt;
+&lt;pre&gt;sdk install java 22.2.r17-nik&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;See also &lt;a href="https://www.graalvm.org/java/quickstart/"&gt;GraalVM Quickstart&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;To build the application with Maven, you need to enable the &lt;code&gt;native&lt;/code&gt; profile:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="content"&gt;
+&lt;pre&gt;$ ./mvnw -Pnative clean package&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="sect2"&gt;
+&lt;h3 id="running"&gt;&lt;a class="anchor" href="#running"&gt;&lt;/a&gt;Running&lt;/h3&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Run the server side application first&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="content"&gt;
+&lt;pre&gt;$ ./server/target/server&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Next, run the client side application.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="content"&gt;
+&lt;pre&gt;$ ./client/target/client&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;You should get output similar to this:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="title"&gt;Client side logs&lt;/div&gt;
+&lt;div class="content"&gt;
+&lt;pre&gt;2022-10-10T12:57:17.712+02:00  INFO [client,,] 82009 --- [           main] com.example.client.ClientApplication     : Starting ClientApplication using Java 17.0.4 on marcin-precision5560 with PID 82009 (/home/marcin/repo/observability/blogs/bootRc1/client/target/client started by marcin in /home/marcin/repo/observability/blogs/bootRc1)
+2022-10-10T12:57:17.712+02:00  INFO [client,,] 82009 --- [           main] com.example.client.ClientApplication     : No active profile set, falling back to 1 default profile: "default"
+2022-10-10T12:57:17.723+02:00  INFO [client,,] 82009 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 6543 (http)
+2022-10-10T12:57:17.723+02:00  INFO [client,,] 82009 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2022-10-10T12:57:17.723+02:00  INFO [client,,] 82009 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.0.23]
+2022-10-10T12:57:17.727+02:00  INFO [client,,] 82009 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2022-10-10T12:57:17.727+02:00  INFO [client,,] 82009 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 15 ms
+2022-10-10T12:57:17.731+02:00  WARN [client,,] 82009 --- [           main] i.m.c.i.binder.jvm.JvmGcMetrics          : GC notifications will not be available because MemoryPoolMXBeans are not provided by the JVM
+2022-10-10T12:57:17.781+02:00  INFO [client,,] 82009 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 15 endpoint(s) beneath base path '/actuator'
+2022-10-10T12:57:17.783+02:00  INFO [client,,] 82009 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 6543 (http) with context path ''
+2022-10-10T12:57:17.783+02:00  INFO [client,,] 82009 --- [           main] com.example.client.ClientApplication     : Started ClientApplication in 0.077 seconds (process running for 0.079)
+2022-10-10T12:57:17.784+02:00  INFO [client,27c1113e4276c4173daec3675f536bf4,e0f2db8b983607d8] 82009 --- [           main] com.example.client.ClientApplication     : Will send a request to the server
+2022-10-10T12:57:17.820+02:00  INFO [client,27c1113e4276c4173daec3675f536bf4,e0f2db8b983607d8] 82009 --- [           main] com.example.client.ClientApplication     : Got response [foo]
+2022-10-10T12:57:18.966+02:00  INFO [client,,] 82009 --- [nio-6543-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2022-10-10T12:57:18.966+02:00  INFO [client,,] 82009 --- [nio-6543-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2022-10-10T12:57:18.966+02:00  INFO [client,,] 82009 --- [nio-6543-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="title"&gt;Server side logs&lt;/div&gt;
+&lt;div class="content"&gt;
+&lt;pre&gt;2022-10-10T12:57:07.200+02:00  INFO [server,,] 81760 --- [           main] com.example.server.ServerApplication     : Starting ServerApplication using Java 17.0.4 on marcin-precision5560 with PID 81760 (/home/marcin/repo/observability/blogs/bootRc1/server/target/server started by marcin in /home/marcin/repo/observability/blogs/bootRc1)
+2022-10-10T12:57:07.201+02:00  INFO [server,,] 81760 --- [           main] com.example.server.ServerApplication     : No active profile set, falling back to 1 default profile: "default"
+2022-10-10T12:57:07.213+02:00  INFO [server,,] 81760 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 7654 (http)
+2022-10-10T12:57:07.213+02:00  INFO [server,,] 81760 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2022-10-10T12:57:07.213+02:00  INFO [server,,] 81760 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.0.23]
+2022-10-10T12:57:07.217+02:00  INFO [server,,] 81760 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2022-10-10T12:57:07.217+02:00  INFO [server,,] 81760 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 16 ms
+2022-10-10T12:57:07.222+02:00  WARN [server,,] 81760 --- [           main] i.m.c.i.binder.jvm.JvmGcMetrics          : GC notifications will not be available because MemoryPoolMXBeans are not provided by the JVM
+2022-10-10T12:57:07.278+02:00  INFO [server,,] 81760 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 15 endpoint(s) beneath base path '/actuator'
+2022-10-10T12:57:07.280+02:00  INFO [server,,] 81760 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 7654 (http) with context path ''
+2022-10-10T12:57:07.281+02:00  INFO [server,,] 81760 --- [           main] com.example.server.ServerApplication     : Started ServerApplication in 0.086 seconds (process running for 0.088)
+2022-10-10T12:57:07.639+02:00  INFO [server,,] 81760 --- [nio-7654-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2022-10-10T12:57:07.639+02:00  INFO [server,,] 81760 --- [nio-7654-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2022-10-10T12:57:07.640+02:00  INFO [server,,] 81760 --- [nio-7654-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2022-10-10T12:57:17.785+02:00  INFO [server,,] 81760 --- [nio-7654-exec-8] com.example.server.MyHandler             : Before running the observation for context [http.server.requests]
+2022-10-10T12:57:17.785+02:00  INFO [server,27c1113e4276c4173daec3675f536bf4,9affba5698490e2d] 81760 --- [nio-7654-exec-8] com.example.server.MyController          : Got a request
+2022-10-10T12:57:17.820+02:00  INFO [server,,] 81760 --- [nio-7654-exec-8] com.example.server.MyHandler             : After running the observation for context [http.server.requests]&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;You can check Grafana for metrics and traces. Read the &lt;a href="#native-support-limitations"&gt;Native Support Limitations&lt;/a&gt; section on why you won&amp;#8217;t find any pushed logs to Loki.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="sect2"&gt;
+&lt;h3 id="native-support-limitations"&gt;&lt;a class="anchor" href="#native-support-limitations"&gt;&lt;/a&gt;Native Support Limitations&lt;/h3&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;You will not see logs being pushed to Loki just yet. For more information, look into &lt;a href="https://github.com/spring-projects/spring-boot/issues/25847"&gt;this issue&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;On the client side, we need to provide the &lt;code&gt;reflect-config.js&lt;/code&gt; configuration manually. For more information, see &lt;a href="https://github.com/open-telemetry/opentelemetry-java/pull/4832"&gt;this PR&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;h1 id="summary" class="sect0"&gt;&lt;a class="anchor" href="#summary"&gt;&lt;/a&gt;Summary&lt;/h1&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;In this blog post, we have managed to give you an introduction of the main concepts behind the Micrometer Observability API. We have also shown you how you can create observations by using the Observation API and annotations. You can also visualize the latency, see the correlated logs, and check the metrics that come from your Spring Boot applications.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;You could also observe your applications by using native images with Spring Native.&lt;/p&gt;
+&lt;/div&gt;
+&lt;h1 id="acknowledgments" class="sect0"&gt;&lt;a class="anchor" href="#acknowledgments"&gt;&lt;/a&gt;Acknowledgments&lt;/h1&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Work on the Micrometer Observability would not be possible without the extensive support of the whole Spring team, &lt;a href="https://github.com/ttddyy/"&gt;Tadaya Tsuyukubo&lt;/a&gt;, &lt;a href="https://github.com/izeye"&gt;Johnny Lim&lt;/a&gt;, and all the other contributors and reviewers.&lt;/p&gt;
+&lt;/div&gt;
+&lt;h1 id="next-steps" class="sect0"&gt;&lt;a class="anchor" href="#next-steps"&gt;&lt;/a&gt;Next Steps&lt;/h1&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Based on community feedback, we will continue to improve our Observability story. We intend to go &lt;a href="https://github.com/micrometer-metrics/micrometer/milestone/177"&gt;GA in November this year&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;This is an exciting time for us. We would again like to thank everyone who has already contributed and reported feedback, and we look forward to further feedback! Check out Spring Boot&amp;#8217;s latest snapshots! Check out the documentation of our projects: &lt;a href="https://micrometer.io/docs/contextPropagation"&gt;Micrometer Context Propagation&lt;/a&gt;, &lt;a href="https://micrometer.io/docs"&gt;Micrometer&lt;/a&gt;, &lt;a href="https://micrometer.io/docs/observation"&gt;Micrometer Observation&lt;/a&gt;, &lt;a href="https://micrometer.io/docs/tracing"&gt;Micrometer Tracing&lt;/a&gt; and &lt;a href="https://micrometer.io/docs/observation#_documentation_building"&gt;Micrometer Docs Generator&lt;/a&gt;! Click &lt;a href="https://github.com/marcingrzejszczak/observability-boot-blog-post"&gt;here&lt;/a&gt; to see the code used for this blog post.&lt;/p&gt;
+&lt;/div&gt;
+&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
+  </entry>
+  <entry>
+    <title>Spring Framework 6.0 goes RC1</title>
+    <link rel="alternate" href="https://spring.io/blog/2022/10/12/spring-framework-6-0-goes-rc1" />
+    <category term="releases" label="Releases" />
+    <author>
+      <name>Juergen Hoeller</name>
+    </author>
+    <id>tag:spring.io,2022-10-12:4942</id>
+    <updated>2022-10-12T11:45:11Z</updated>
+    <content type="html">&lt;p&gt;Dear Spring community,&lt;/p&gt;
+&lt;p&gt;It is my pleasure to announce that a feature-complete Spring Framework 6.0 release candidate is &lt;a href="https://repo.spring.io/"&gt;available&lt;/a&gt; now! We are expecting a further release candidate in time for the first Spring Boot 3.0 release candidate next week, and then our final releases for general availability in November.&lt;/p&gt;
+&lt;p&gt;As a major revision of the core framework, 6.0 RC1 comes with a Java 17+ baseline, a move to Jakarta EE 9+ (in the &lt;code&gt;jakarta&lt;/code&gt; namespace superseding the former &lt;code&gt;javax&lt;/code&gt; based EE APIs), and a broader infrastructure revision. This provides access to the latest web containers such as &lt;a href="https://tomcat.apache.org/whichversion.html"&gt;Tomcat 10&lt;/a&gt; / &lt;a href="https://www.eclipse.org/jetty/download.php"&gt;Jetty 11&lt;/a&gt; and the latest persistence providers such as &lt;a href="https://hibernate.org/orm/releases/6.1/"&gt;Hibernate ORM 6.1&lt;/a&gt; - all of which are exclusively available with the jakarta-namespaced variants of the Servlet API and JPA. It also sets the stage for the further evolution of those APIs and providers, as well as the further evolution of the JDK itself.&lt;/p&gt;
+&lt;p&gt;Most importantly, this release completes our foundation for &lt;a href="https://spring.io/blog/2022/03/22/initial-aot-support-in-spring-framework-6-0-0-m3"&gt;Ahead-Of-Time transformations&lt;/a&gt; and the corresponding AOT processing support for Spring application contexts. This opens up a wide range of optimized deployment arrangements, from fine-tuned JVM deployments to first-class support for GraalVM native images (see the &lt;a href="https://spring.io/blog/2022/09/26/native-support-in-spring-boot-3-0-0-m5"&gt;related Spring Boot 3 blog post&lt;/a&gt;). Stay tuned for Spring Boot 3.0 RC1!&lt;/p&gt;
+&lt;p&gt;On a timely note, there is also an opportunity to explore virtual threads (the &amp;ldquo;Project Loom&amp;rdquo; preview in JDK 19) with Spring-based applications: See &lt;a href="https://spring.io/blog/2022/10/11/embracing-virtual-threads"&gt;&amp;ldquo;Embracing Virtual Threads&amp;rdquo;&lt;/a&gt; for an overview. At this point, we provide customization options to plug in virtual-thread based &lt;code&gt;Executor&lt;/code&gt; implementations; we aim to provide first-class configuration options when Project Loom goes out of preview.&lt;/p&gt;
+&lt;p&gt;There are many further features and refinements available in Spring Framework 6.0, e.g. an &lt;a href="https://docs.spring.io/spring-framework/docs/6.0.0-RC1/reference/html/integration.html#rest-http-interface"&gt;HTTP interface client&lt;/a&gt; based on &lt;code&gt;@HttpExchange&lt;/code&gt; service interfaces, support for &lt;a href="https://docs.spring.io/spring-framework/docs/6.0.0-RC1/reference/html/web.html#mvc-ann-rest-exceptions"&gt;RFC 7807 problem details&lt;/a&gt;, and Micrometer-based observability for Spring&amp;rsquo;s HTTP clients. Please see our &lt;a href="https://github.com/spring-projects/spring-framework/wiki/What%27s-New-in-Spring-Framework-6.x/"&gt;What&amp;rsquo;s New page&lt;/a&gt; for a comprehensive overview and give 6.0 an early try!&lt;/p&gt;
+&lt;p&gt;Cheers,&lt;br/&gt;Juergen&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://projects.spring.io/spring-framework/"&gt;Project Page&lt;/a&gt; | &lt;a href="https://github.com/spring-projects/spring-framework/milestones"&gt;GitHub&lt;/a&gt; | &lt;a href="https://docs.spring.io/spring-framework/docs/6.0.0-RC1/reference/html/"&gt;Documentation&lt;/a&gt;&lt;/p&gt;
+&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
+  </entry>
+  <entry>
+    <title>The State of Spring Survey 2022 Is Here!</title>
+    <link rel="alternate" href="https://spring.io/blog/2022/10/11/the-state-of-spring-survey-2022-is-here" />
+    <category term="news" label="News and Events" />
+    <author>
+      <name>Michael Minella</name>
+    </author>
+    <id>tag:spring.io,2022-10-11:4941</id>
+    <updated>2022-10-11T17:00:00Z</updated>
+    <content type="html">&lt;p&gt;The State of Spring survey is here! Please give us your feedback by going to &lt;a href="https://spring.io/survey"&gt;spring.io/survey&lt;/a&gt;. Spread the word by sharing these posts on &lt;a href="https://twitter.com/springcentral/status/1577314901525204992"&gt;Twitter&lt;/a&gt;, &lt;a href="https://www.linkedin.com/posts/vmware-tanzu_we-want-to-hear-from-you-share-your-feedback-activity-6983123705023406080-pwRM/"&gt;LinkedIn&lt;/a&gt;, and any other social platform you use! &lt;/p&gt;
+&lt;hr/&gt;
+&lt;p&gt;Spring fans, our annual survey of the Spring community is back! Last year, we dived into the biggest projects and the most popular app patterns built with Spring, and a whole lot more! You told us your views about Spring Native, Data, and what matters to you when you start using a new Spring project.&lt;/p&gt;
+&lt;p&gt;The survey is back for 2022, and we’re really excited to learn again from you. What matters to you when you build with Spring? What types of apps are you building with Spring? What can we change, and what should remain the same?&lt;/p&gt;
+&lt;p&gt;Completing the survey should take about 15 minutes. If you want to be among the first to get the report, feel free to leave your email at the end of the survey.&lt;/p&gt;
+&lt;p&gt;Ok, if you’re ready, &lt;strong&gt;head over to &lt;a href="https://spring.io/survey"&gt;spring.io/survey&lt;/a&gt; now!&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;One last thing - we&amp;rsquo;d really appreciate it if you share the survey with others in the Spring community. You can share the link spring.io/survey, or our &lt;a href="https://twitter.com/springcentral/status/1577314901525204992"&gt;Twitter&lt;/a&gt; and &lt;a href="https://www.linkedin.com/posts/vmware-tanzu_we-want-to-hear-from-you-share-your-feedback-activity-6983123705023406080-pwRM/"&gt;LinkedIn&lt;/a&gt; posts. Thank you!&lt;/p&gt;
+&lt;p&gt;The Spring Team&lt;/p&gt;
+&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
+  </entry>
+  <entry>
+    <title>Embracing Virtual Threads</title>
+    <link rel="alternate" href="https://spring.io/blog/2022/10/11/embracing-virtual-threads" />
+    <category term="engineering" label="Engineering" />
+    <author>
+      <name>Mark Paluch</name>
+    </author>
+    <id>tag:spring.io,2022-10-07:4938</id>
+    <updated>2022-10-11T07:32:00Z</updated>
+    <content type="html">&lt;div class="paragraph"&gt;
+&lt;p&gt;Project Loom has made it into the JDK through &lt;a href="https://openjdk.org/jeps/425"&gt;JEP 425&lt;/a&gt;. It&amp;#8217;s available since Java 19 in September 2022 as a preview feature.
+Its goal is to dramatically reduce the effort of writing, maintaining, and observing high-throughput concurrent applications.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="sect1"&gt;
+&lt;h2 id="where-virtual-threads-make-sense"&gt;&lt;a class="anchor" href="#where-virtual-threads-make-sense"&gt;&lt;/a&gt;Where Virtual Threads make sense&lt;/h2&gt;
+&lt;div class="sectionbody"&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;This makes lightweight Virtual Threads an exciting approach for application developers and the Spring Framework. Past years indicated a trend towards applications that communicate over the network with each other. Many applications make use of data stores, message brokers, and remote services. I/O-intensive applications are the primary ones that benefit from Virtual Threads if they were built to use blocking I/O facilities such as &lt;code&gt;InputStream&lt;/code&gt; and synchronous HTTP, database, and message broker clients.
+Running such workloads on Virtual Threads helps reduce the memory footprint compared to Platform Threads and in certain situations, Virtual Threads can increase concurrency.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Higher concurrency can be achieved if the system has additional resources necessary for concurrency. Specifically, these are:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="olist arabic"&gt;
+&lt;ol class="arabic"&gt;
+&lt;li&gt;
+&lt;p&gt;Available connections in a connection pool&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Sufficient memory to serve the increased load&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Unused CPU time&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Use of Virtual Threads clearly is not limited to the direct reduction of memory footprints or an increase in concurrency. The introduction of Virtual Threads also prompts a broader revisit of decisions made for a runtime when only Platform Threads were available.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="sect1"&gt;
+&lt;h2 id="revision-of-concurrency-utilities"&gt;&lt;a class="anchor" href="#revision-of-concurrency-utilities"&gt;&lt;/a&gt;Revision of Concurrency Utilities&lt;/h2&gt;
+&lt;div class="sectionbody"&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Spring Framework&amp;#8217;s &lt;code&gt;SimpleAsyncTaskExecutor&lt;/code&gt; uses a new Platform Thread for each runnable submitted if no &lt;code&gt;ThreadFactory&lt;/code&gt; is configured. Such an arrangement requires Platform Thread creation resulting in lower throughput and higher memory consumption.
+&lt;code&gt;SimpleAsyncTaskExecutor&lt;/code&gt; could be revised to use Virtual Threads by default to reduce the memory footprint and increase throughput in its default configuration. (In the meantime, a custom &lt;code&gt;TaskExecutor&lt;/code&gt; variant can be used to the same effect.)&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="sect1"&gt;
+&lt;h2 id="revision-of-programming-models"&gt;&lt;a class="anchor" href="#revision-of-programming-models"&gt;&lt;/a&gt;Revision of Programming Models&lt;/h2&gt;
+&lt;div class="sectionbody"&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Virtual Threads can change our perspective on asynchronous programming interfaces.
+The reasons to use asynchronous programming models go away in many cases if we start with the assumption that our code runs on Virtual Threads.
+Virtual Threads are much more lightweight to allocate, and the number of threads is no longer a primary limitation for scalability.
+To make things more clear, asynchronous programming models do not remove the latency of e.g. a network call.
+The asynchronous Apache HTTP Client or netty simply switches tasks if a network call cannot progress instead of blocking a Thread.
+And the same happens with Virtual Threads: They effectively yield towards another &lt;code&gt;Runnable&lt;/code&gt; that can progress with its work.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Project Loom has revisited all areas in the Java runtime libraries that can block and updated the code to yield if the code encounters blocking.
+Java&amp;#8217;s concurrency utils (e.g. &lt;code&gt;ReentrantLock&lt;/code&gt;, &lt;code&gt;CountDownLatch&lt;/code&gt;, &lt;code&gt;CompletableFuture&lt;/code&gt;) can be used on Virtual Threads without blocking underlying Platform Threads.
+This change makes &lt;code&gt;Future&lt;/code&gt;'s &lt;code&gt;.get()&lt;/code&gt; and &lt;code&gt;.get(Long, TimeUnit)&lt;/code&gt; good citizens on Virtual Threads and removes the need for callback-driven usage of Futures.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Assumptions leading to the asynchronous Servlet API are subject to be invalidated with the introduction of Virtual Threads.
+The async Servlet API was introduced to release server threads so the server could continue serving requests while a worker thread continues working on the request.
+Running servlet request and response processing on a Virtual Thread removes the need to release server threads leading to the question, why to use &lt;code&gt;ServletRequest.startAsync()&lt;/code&gt; at all, as asynchronous forking involves a lot of state-saving that could be eliminated as it would be no longer required.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="sect1"&gt;
+&lt;h2 id="mitigating-limitations"&gt;&lt;a class="anchor" href="#mitigating-limitations"&gt;&lt;/a&gt;Mitigating Limitations&lt;/h2&gt;
+&lt;div class="sectionbody"&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Our team has been experimenting with Virtual Threads since they were called Fibers. Since then and still with the release of Java 19, a limitation was prevalent, leading to Platform Thread pinning, effectively reducing concurrency when using &lt;code&gt;synchronized&lt;/code&gt;. The use of &lt;code&gt;synchronized&lt;/code&gt; code blocks is not in of itself a problem; only when those blocks contain blocking code, generally speaking I/O operations. These arrangements can be problematic as carrier Platform Threads are a limited resource and Platform Thread pinning can lead to application performance degradation when running code on Virtual Threads without careful inspection of the workload. In fact, the same blocking code in synchronized blocks can lead to performance issues even without Virtual Threads.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Spring Framework makes a lot of use of &lt;code&gt;synchronized&lt;/code&gt; to implement locking, mostly around local data structures. Over the years, before Virtual Threads were available, we have revised &lt;code&gt;synchronized&lt;/code&gt; blocks which might potentially interact with third-party resources, removing lock contention in highly concurrent applications. So Spring is in pretty good shape already owing to its large community and extensive feedback from existing concurrent applications. On the path to becoming the best possible citizen in a Virtual Thread scenario, we will further revisit &lt;code&gt;synchronized&lt;/code&gt; usage in the context of I/O or other blocking code to avoid Platform Thread pinning in hot code paths so that your application can get the most out of Project Loom.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="sect1"&gt;
+&lt;h2 id="running-spring-applications-on-virtual-threads"&gt;&lt;a class="anchor" href="#running-spring-applications-on-virtual-threads"&gt;&lt;/a&gt;Running Spring Applications on Virtual Threads&lt;/h2&gt;
+&lt;div class="sectionbody"&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;With the most recent versions of Spring Framework, Spring Boot and Apache Tomcat, you can start experimenting on your own.
+You start analyzing how Virtual Threads impact your application workloads and benchmark Virtual Threads usage vs. Platform Threads usage.
+To customize your Spring Boot application to process servlet requests on Virtual Threads, apply the following customization:&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="listingblock"&gt;
+&lt;div class="content"&gt;
+&lt;pre class="prettyprint highlight"&gt;&lt;code data-lang="java"&gt;@Bean(TaskExecutionAutoConfiguration.APPLICATION_TASK_EXECUTOR_BEAN_NAME)
+public AsyncTaskExecutor asyncTaskExecutor() {
+  return new TaskExecutorAdapter(Executors.newVirtualThreadPerTaskExecutor());
+}
+
+@Bean
+public TomcatProtocolHandlerCustomizer&amp;lt;?&amp;gt; protocolHandlerVirtualThreadExecutorCustomizer() {
+  return protocolHandler -&amp;gt; {
+    protocolHandler.setExecutor(Executors.newVirtualThreadPerTaskExecutor());
+  };
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;We are doing everything we can to make the preview experience as seamless as possible for the time being, and we expect to provide first-class configuration options once Loom goes out of preview in a new OpenJDK release.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;If we learn about the concrete potential for virtual-thread-oriented optimizations in the core framework, be it certain &lt;code&gt;synchronized&lt;/code&gt; usage points or certain &lt;code&gt;ThreadLocal&lt;/code&gt; usage, we&amp;#8217;ll try to roll corresponding refinements into upcoming Spring Framework and Spring Boot maintenance releases as far as possible, even before Loom&amp;#8217;s general availability.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;Virtual Threads impact not only Spring Framework but all surrounding integrations, such as database drivers, messaging systems, HTTP clients, and many more. Many of these projects are aware of the need to improve their &lt;code&gt;synchronized&lt;/code&gt; behavior to unleash the full potential of Project Loom.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="sect1"&gt;
+&lt;h2 id="will-your-application-benefit-from-virtual-threads"&gt;&lt;a class="anchor" href="#will-your-application-benefit-from-virtual-threads"&gt;&lt;/a&gt;Will your application benefit from Virtual Threads?&lt;/h2&gt;
+&lt;div class="sectionbody"&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;It is a more specific question than &lt;em&gt;will there be benefit&lt;/em&gt;, and one harder to answer.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;What we can say is that the most likely scenario in which you can benefit without almost any change, is if you&amp;#8217;re currently not doing anything asynchronous at all (not even Servlet 3.1 style async requests, or otherwise you&amp;#8217;ll probably need to make some revisions to align better).
+And of course, there would have to be some actual I/O or other thread parking for Loom to bring benefits.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;We also believe that ReactiveX-style APIs remain a powerful way to compose concurrent logic and a natural way for dealing with streams. We see Virtual Threads complementing reactive programming models in removing barriers of blocking I/O while processing infinite streams using Virtual Threads purely remains a challenge.
+ReactiveX is the right approach for concurrent scenarios in which declarative concurrency (such as scatter-gather) matters.
+The underlying Reactive Streams specification defines a protocol for demand, back pressure, and cancellation of data pipelines without limiting itself to non-blocking API or specific Thread usage.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;We very much look forward to our collective experience and feedback from applications. Our focus currently is to make sure that you are enabled to begin experimenting on your own. If you encounter specific issues in your own early experiments with Virtual Threads, please report them to the corresponding project.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="paragraph"&gt;
+&lt;p&gt;&lt;em&gt;Give virtual threads a try with your Spring-based applications, and let us know how it goes!&lt;/em&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
+  </entry>
+  <entry>
+    <title>This Week in Spring - October 11th, 2022</title>
+    <link rel="alternate" href="https://spring.io/blog/2022/10/11/this-week-in-spring-october-11th-2022" />
+    <category term="engineering" label="Engineering" />
+    <author>
+      <name>Josh Long</name>
+    </author>
+    <id>tag:spring.io,2022-10-11:4940</id>
+    <updated>2022-10-11T07:00:00Z</updated>
+    <content type="html">&lt;p&gt;Hi, Spring fans! Welcome to another installment of &lt;em&gt;This Week in Spring&lt;/em&gt;! I write this installment as I pack and prepare for my trip to Antwerp, Belgium, for the always-amazing Devoxx show in Antwerp, Belgium. I&amp;rsquo;ve so missed this show over the pandemic and am so looking forward to returning. I hope to catch any and all of you there, too! I&amp;rsquo;ll be copresenting with my pal James Ward about some of the new and novel in Spring Boot 3 and Kotlin. It&amp;rsquo;s going to be awesome - join us and we&amp;rsquo;ll have some fun together! &lt;/p&gt;
+&lt;p&gt;Now, we&amp;rsquo;ve got a ton to cover so let&amp;rsquo;s dive right into it!&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/10/10/spring-tips-spring-boot-apache-kafka"&gt;Spring Tips: Spring Boot &amp;amp; Apache Kafka&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/10/05/spring-batch-5-0-0-m7-available-now"&gt;Spring Batch 5.0.0-M7 available now!&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/10/06/spring-cloud-2022-0-0-m5-is-now-available"&gt;Spring Cloud 2022.0.0-M5 is now available&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/10/05/spring-shell-2-1-2-and-3-0-0-m1-are-now-available"&gt;Spring Shell 2.1.2 and 3.0.0-M1 are now available&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://dimensionalresearch.co1.qualtrics.com/jfe/form/SV_9TrBJxjPcA68kQK"&gt;The State of Spring Survey&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;I put the updated code for my latest incarnation of &lt;em&gt;Cloud Native Java&lt;/em&gt; - online in Github &lt;a href="https://github.com/joshlong/cloud-native-java-2022/tree/main/e2e5"&gt;&lt;code&gt;cloud-native-java-2022/e2e5&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/10/06/a-bootiful-podcast-spring-and-java-community-legend-marten-deinum"&gt;A Bootiful Podcast: Spring and Java community legend Marten Deinum&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://feeds.feedblitz.com/~/714588576/0/baeldung~Difference-Between-Flux-and-Mono"&gt;Difference Between &lt;code&gt;Flux&lt;/code&gt; and &lt;code&gt;Mono&lt;/code&gt; in Project Reactor&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Hey - Baeldung.com (yes, &lt;a href="https://baeldung.com"&gt;&lt;em&gt;that&lt;/em&gt; Baeldung.com&lt;/a&gt;!) is using Spring, and they&amp;rsquo;re looking &lt;a href="https://feeds.feedblitz.com/~/714616498/0/baeldung~Looking-for-a-Java-Team-Lead-with-Spring-Experience-Remote-Part-Time"&gt;for a Java Team Lead with Spring Experience (Remote) (Part Time)&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://feeds.feedblitz.com/~/714708710/0/baeldung~Patterns-for-Iterating-Over-Large-Result-Sets-With-Spring-Data-JPA"&gt;Patterns for Iterating Over Large Result Sets With Spring Data JPA&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://twitter.com/rdehuyss/status/1577208092890046465"&gt;JobRunr&amp;rsquo;s already been upgraded to Spring Boot 3 for the JRE&lt;/a&gt; - and perhaps Spring Boot 3 AOT support is on the way?&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://feeds.feedblitz.com/~/714448448/0/baeldung~JMeter-Latency-vs-Load-Time/"&gt;JMeter: Latency vs. Load Time&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Want to learn more about Spring Boot and the wider ecosystem? &lt;a href="https://springone.io/"&gt;SpringOne 2022&lt;/a&gt; is almost here! If you want a chance to learn from the source, I hope you’ll join us 6-8 December 2022, right here in my hometown of San Francisco, my favorite west coast city in the USA. (Psst.: If you register now, there’s a $200 discount from the pass price with this code &lt;code&gt;S1VM22_Advocate_200&lt;/code&gt;.)&lt;/p&gt;
+&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
+  </entry>
+  <entry>
+    <title>Spring Tips: Spring Boot &amp; Apache Kafka</title>
+    <link rel="alternate" href="https://spring.io/blog/2022/10/10/spring-tips-spring-boot-apache-kafka" />
+    <category term="engineering" label="Engineering" />
+    <author>
+      <name>Josh Long</name>
+    </author>
+    <id>tag:spring.io,2022-10-10:4939</id>
+    <updated>2022-10-10T07:00:00Z</updated>
+    <content type="html">&lt;p&gt;Hi, Spring fans! In this installment of Spring Tips, I look at the venerable Apache Kafka broker and its integrations at various level of abstraction in the Spring Boot ecosystem.&lt;/p&gt;
+&lt;iframe width="560" height="315" src="https://www.youtube.com/embed/DJHUNSGh3K0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen&gt;&lt;/iframe&gt;
+&lt;p&gt;Want to learn more about event driven architectures, AOT and GraalVM, Apache Kafka, and Spring Boot? &lt;a href="https://springone.io"&gt;SpringOne 2022&lt;/a&gt; is almost here! If you want a chance to learn from the source, then I hope you’ll join us 6-8 December 2022, right here in my hometown of San Francisco, my favorite west coast city in the USA. (Psst.: If you register now, there’s a $200 discount from the pass price with this code &lt;code&gt;S1VM22_Advocate_200&lt;/code&gt;.)&lt;/p&gt;
+&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
+  </entry>
   <entry>
     <title>Spring Cloud 2022.0.0-M5 is now available</title>
     <link rel="alternate" href="https://spring.io/blog/2022/10/06/spring-cloud-2022-0-0-m5-is-now-available" />
@@ -727,352 +1751,6 @@ dependencies {&#xD;
 &lt;p&gt;Following its GA release earlier this week, Java 19 is now supported.&lt;/p&gt;&lt;h3&gt;&lt;a href="#how-can-you-help" class="anchor" name="how-can-you-help"&gt;&lt;/a&gt;How can you help?&lt;/h3&gt;
 &lt;p&gt;If you&amp;rsquo;re interested in helping out, check out the &lt;a href="https://github.com/spring-projects/spring-boot/labels/status%3A%20ideal-for-contribution"&gt;&amp;ldquo;ideal for contribution&amp;rdquo; tag&lt;/a&gt; in the issue repository. If you have general questions, please ask on &lt;a href="https://stackoverflow.com"&gt;stackoverflow.com&lt;/a&gt; using the &lt;a href="https://stackoverflow.com/tags/spring-boot"&gt;&lt;code&gt;spring-boot&lt;/code&gt; tag&lt;/a&gt; or chat with the community on &lt;a href="https://gitter.im/spring-projects/spring-boot"&gt;Gitter&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;&lt;a href="https://spring.io/projects/spring-boot/"&gt;Project Page&lt;/a&gt; | &lt;a href="https://github.com/spring-projects/spring-boot"&gt;GitHub&lt;/a&gt; | &lt;a href="https://github.com/spring-projects/spring-boot/issues"&gt;Issues&lt;/a&gt; | &lt;a href="https://docs.spring.io/spring-boot/docs/2.6.12/reference/html"&gt;Documentation&lt;/a&gt; | &lt;a href="https://stackoverflow.com/questions/tagged/spring-boot"&gt;Stack Overflow&lt;/a&gt; | &lt;a href="https://gitter.im/spring-projects/spring-boot"&gt;Gitter&lt;/a&gt;&lt;/p&gt;
-&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
-  </entry>
-  <entry>
-    <title>Spring Batch 5.0.0-M6 and 4.3.7 are out!</title>
-    <link rel="alternate" href="https://spring.io/blog/2022/09/22/spring-batch-5-0-0-m6-and-4-3-7-are-out" />
-    <category term="releases" label="Releases" />
-    <author>
-      <name>Mahmoud Ben Hassine</name>
-    </author>
-    <id>tag:spring.io,2022-09-21:4922</id>
-    <updated>2022-09-22T08:00:00Z</updated>
-    <content type="html">&lt;p&gt;I am pleased to announce that Spring Batch &lt;code&gt;5.0.0-M6&lt;/code&gt; is now available from our &lt;a href="https://repo.spring.io/ui/native/milestone/org/springframework/batch/spring-batch-core/5.0.0-M6/"&gt;milestone repository&lt;/a&gt; and that &lt;code&gt;4.3.7&lt;/code&gt; is available from &lt;a href="https://repo.maven.apache.org/maven2/org/springframework/batch/spring-batch-core/4.3.7/"&gt;Maven Central&lt;/a&gt;. Version &lt;code&gt;4.3.7&lt;/code&gt; is a patch release that can be used as a drop-in replacement for &lt;code&gt;4.3.6&lt;/code&gt;. You can find its release notes &lt;a href="https://github.com/spring-projects/spring-batch/releases/tag/4.3.7"&gt;here&lt;/a&gt;. This blog post is more about the new milestone release, version &lt;code&gt;5.0.0-M6&lt;/code&gt;. In this milestone, we focused on improving the configuration process of Spring Batch to make it more flexible and straightforward. This blog post walks through the major changes in this area of the framework and presents the new features introduced in this milestone release. For the complete list of changes, see the &lt;a href="https://github.com/spring-projects/spring-batch/releases/tag/5.0.0-M6"&gt;release notes&lt;/a&gt;.&lt;/p&gt;&lt;h2&gt;&lt;a href="#new-annotation-attributes-in-enablebatchprocessing" class="anchor" name="new-annotation-attributes-in-enablebatchprocessing"&gt;&lt;/a&gt;New Annotation Attributes in EnableBatchProcessing&lt;/h2&gt;
-&lt;p&gt;In this release, the &lt;code&gt;@EnableBatchProcessing&lt;/code&gt; annotation introduced new attributes to specify which components and parameters should be used to configure the Batch infrastructure beans. For example, you can now specify which data source and transaction manager Spring Batch should configure in the job repository. The following snippet shows the new way to do such configuration:&lt;/p&gt;
-&lt;pre&gt;&lt;code class="prettyprint java"&gt;@Configuration&#xD;
-@EnableBatchProcessing(dataSourceRef = &amp;quot;batchDataSource&amp;quot;, transactionManagerRef = &amp;quot;batchTransactionManager&amp;quot;)&#xD;
-public class MyJobConfiguration {&#xD;
-&#xD;
-	@Bean&#xD;
-	public Job job(JobRepository jobRepository) {&#xD;
-		return new JobBuilder(&amp;quot;myJob&amp;quot;, jobRepository)&#xD;
-			 //define job flow as needed&#xD;
-			 .build();&#xD;
-	}&#xD;
-&#xD;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;In this example, &lt;code&gt;batchDataSource&lt;/code&gt; and &lt;code&gt;batchTransactionManager&lt;/code&gt; refer to beans in the application context that are used to configure the job repository and job explorer. You no longer need to define a custom &lt;code&gt;BatchConfiguer&lt;/code&gt;, which was removed in this release. For example, providing a custom execution context serializer in Spring Batch v4 was possible by providing a custom &lt;code&gt;BatchConfigurer&lt;/code&gt;, as follows:&lt;/p&gt;
-&lt;pre&gt;&lt;code class="prettyprint java"&gt;@Configuration&#xD;
-@EnableBatchProcessing&#xD;
-public class MyJobConfigWithCustomSerializer {&#xD;
-&#xD;
-    @Bean&#xD;
-    public BatchConfigurer batchConfigurer() {&#xD;
-        return new DefaultBatchConfigurer() {&#xD;
-            @Override&#xD;
-            public JobRepository getJobRepository() {&#xD;
-                JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();&#xD;
-                factory.setSerializer(createCustomSerializer());&#xD;
-                // set other properties on the factory bean&#xD;
-                try {&#xD;
-                    factory.afterPropertiesSet();&#xD;
-                    return factory.getObject();&#xD;
-                } catch (Exception e) {&#xD;
-                    throw new RuntimeException(e);&#xD;
-                }&#xD;
-            }&#xD;
-&#xD;
-            @Override&#xD;
-            public JobExplorer getJobExplorer() {&#xD;
-                JobExplorerFactoryBean factoryBean = new JobExplorerFactoryBean();&#xD;
-                factoryBean.setSerializer(createCustomSerializer());&#xD;
-                // set other properties on the factory bean&#xD;
-                try {&#xD;
-                    factoryBean.afterPropertiesSet();&#xD;
-                    return factoryBean.getObject();&#xD;
-                } catch (Exception e) {&#xD;
-                    throw new RuntimeException(e);&#xD;
-                }&#xD;
-            }&#xD;
-&#xD;
-            private ExecutionContextSerializer createCustomSerializer() {&#xD;
-                Jackson2ExecutionContextStringSerializer serializer = new Jackson2ExecutionContextStringSerializer();&#xD;
-                // customize serializer&#xD;
-                return serializer;&#xD;
-            }&#xD;
-        };&#xD;
-    }&#xD;
-&#xD;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;In Spring Batch v5, you can provide a custom serializer as follows:&lt;/p&gt;
-&lt;pre&gt;&lt;code class="prettyprint java"&gt;@Configuration&#xD;
-@EnableBatchProcessing(executionContextSerializerRef = &amp;quot;myCustomSerializer&amp;quot;)&#xD;
-public class MyJobConfigWithCustomSerializer {&#xD;
-&#xD;
-    @Bean&#xD;
-    public Job job(JobRepository jobRepository) {&#xD;
-        return new JobBuilder(&amp;quot;myJob&amp;quot;, jobRepository)&#xD;
-                //define job flow as needed&#xD;
-                .build();&#xD;
-    }&#xD;
-    &#xD;
-    @Bean&#xD;
-    public ExecutionContextSerializer myCustomSerializer() {&#xD;
-        Jackson2ExecutionContextStringSerializer serializer = new Jackson2ExecutionContextStringSerializer();&#xD;
-        // customize serializer&#xD;
-        return serializer;&#xD;
-    }&#xD;
-&#xD;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;We believe this new way of configuring Spring Batch is more intuitive, more straightforward, and less prone to errors.&lt;/p&gt;&lt;h2&gt;&lt;a href="#new-configuration-class-for-infrastructure-beans" class="anchor" name="new-configuration-class-for-infrastructure-beans"&gt;&lt;/a&gt;New Configuration Class for Infrastructure Beans&lt;/h2&gt;
-&lt;p&gt;In this release, you can use a new configuration class, named &lt;code&gt;DefaultBatchConfiguration&lt;/code&gt;, as an alternative to using &lt;code&gt;@EnableBatchProcessing&lt;/code&gt; for the configuration of infrastructure beans. This class provides infrastructure beans with default configuration, which you can customize as needed. The following snippet shows a typical usage of this class:&lt;/p&gt;
-&lt;pre&gt;&lt;code class="prettyprint"&gt;@Configuration&#xD;
-class MyJobConfiguration extends DefaultBatchConfiguration {&#xD;
-&#xD;
-	@Bean&#xD;
-	public Job job(JobRepository jobRepository) {&#xD;
-		return new JobBuilder(&amp;quot;myJob&amp;quot;, jobRepository)&#xD;
-				//define job flow as needed&#xD;
-				.build();&#xD;
-	}&#xD;
-&#xD;
-}
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;In this example, the &lt;code&gt;JobRepository&lt;/code&gt; bean injected in the &lt;code&gt;Job&lt;/code&gt; bean definition is defined in the &lt;code&gt;DefaultBatchConfiguration&lt;/code&gt; class. You can specify custom parameters by overriding the corresponding getter. For example, the following example shows how to override the default character encoding used in the job repository and job explorer:&lt;/p&gt;
-&lt;pre&gt;&lt;code class="prettyprint"&gt;@Configuration&#xD;
-class MyJobConfiguration extends DefaultBatchConfiguration {&#xD;
-&#xD;
-	@Bean&#xD;
-	public Job job(JobRepository jobRepository) {&#xD;
-		return new JobBuilder(&amp;quot;job&amp;quot;, jobRepository)&#xD;
-				// define job flow as needed&#xD;
-				.build();&#xD;
-	}&#xD;
-&#xD;
-	@Override&#xD;
-	protected Charset getCharset() {&#xD;
-		return StandardCharsets.ISO_8859_1;&#xD;
-	}&#xD;
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;h2&gt;&lt;a href="#transaction-support-in-jobexplorer-and-joboperator" class="anchor" name="transaction-support-in-jobexplorer-and-joboperator"&gt;&lt;/a&gt;Transaction Support in JobExplorer and JobOperator&lt;/h2&gt;
-&lt;p&gt;This release introduces transaction support in the &lt;code&gt;JobExplorer&lt;/code&gt; created through the &lt;code&gt;JobExplorerFactoryBean&lt;/code&gt;. You can now specify which transaction manager to use to drive the ready-only transactions when querying Batch meta-data. Also, you can now customize the transaction attributes. The same transaction support was added to the &lt;code&gt;JobOperator&lt;/code&gt; through a new factory bean, named &lt;code&gt;JobOperatorFactoryBean&lt;/code&gt;.&lt;/p&gt;&lt;h2&gt;&lt;a href="#deprecations-and-api-changes" class="anchor" name="deprecations-and-api-changes"&gt;&lt;/a&gt;Deprecations and API Changes&lt;/h2&gt;
-&lt;p&gt;This milestone release introduces the following deprecations and API changes:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;&lt;code&gt;JobBuilderFactory&lt;/code&gt; and &lt;code&gt;StepBuilderFactory&lt;/code&gt; are now deprecated. Instead, you should use &lt;code&gt;JobBuilder&lt;/code&gt; and &lt;code&gt;StepBuilder&lt;/code&gt;.&lt;/li&gt;
-  &lt;li&gt;&lt;code&gt;BatchConfigurer&lt;/code&gt; and &lt;code&gt;DefaultBatchConfigurer&lt;/code&gt; were removed. You should no longer use this interface and its default implementation to customize the behaviour of &lt;code&gt;@EnableBatchProcessing&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;h2&gt;&lt;a href="#dependencies-upgrades" class="anchor" name="dependencies-upgrades"&gt;&lt;/a&gt;Dependencies Upgrades&lt;/h2&gt;
-&lt;p&gt;Major dependencies have been upgraded to the following versions:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Upgrade to Spring Framework 6.0.0-M6&lt;/li&gt;
-  &lt;li&gt;Upgrade to Spring Data 2022.0.0-M6&lt;/li&gt;
-  &lt;li&gt;Upgrade to Spring Integration 6.0.0-M5&lt;/li&gt;
-  &lt;li&gt;Upgrade to Spring AMQP 3.0.0-M4&lt;/li&gt;
-  &lt;li&gt;Upgrade to Spring for Apache Kafka 3.0.0-M6&lt;/li&gt;
-  &lt;li&gt;Upgrade to Spring Retry 2.0.0-M1&lt;/li&gt;
-  &lt;li&gt;Upgrade to Spring LDAP 3.0.0-M4&lt;/li&gt;
-  &lt;li&gt;Upgrade to Micrometer 1.10.0-M5&lt;/li&gt;
-&lt;/ul&gt;&lt;h2&gt;&lt;a href="#feedback" class="anchor" name="feedback"&gt;&lt;/a&gt;Feedback&lt;/h2&gt;
-&lt;p&gt;I would like to thank all contributors who had a role in this release! As we continue our work on Spring Batch 5, we look forward to your feedback on &lt;a href="https://github.com/spring-projects/spring-batch/issues"&gt;Github&lt;/a&gt;, &lt;a href="https://twitter.com/springbatch"&gt;Twitter&lt;/a&gt;, and &lt;a href="https://stackoverflow.com/questions/tagged/spring-batch"&gt;StackOverflow&lt;/a&gt;.&lt;/p&gt;
-&lt;hr/&gt;
-&lt;p&gt;&lt;a href="https://spring.io/projects/spring-batch"&gt;Spring Batch Home&lt;/a&gt;|&lt;a href="https://github.com/spring-projects/spring-batch"&gt;Source on Github&lt;/a&gt;|&lt;a href="https://docs.spring.io/spring-batch/docs/5.0.0-M6/reference/html/index-single.html"&gt;Reference documentation&lt;/a&gt;&lt;/p&gt;
-&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
-  </entry>
-  <entry>
-    <title>Spring Integration 6.0.0-M5 and 5.5.15 Available</title>
-    <link rel="alternate" href="https://spring.io/blog/2022/09/21/spring-integration-6-0-0-m5-and-5-5-15-available" />
-    <category term="releases" label="Releases" />
-    <author>
-      <name>Artem Bilan</name>
-    </author>
-    <id>tag:spring.io,2022-09-21:4921</id>
-    <updated>2022-09-21T17:55:30Z</updated>
-    <content type="html">&lt;div class="paragraph"&gt;
-&lt;p&gt;Dear Spring community,&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="paragraph"&gt;
-&lt;p&gt;I&amp;#8217;d like to share with you an availability of the latest &lt;code&gt;Milestone 5&lt;/code&gt; of new Spring Integration &lt;code&gt;6.0&lt;/code&gt; generation.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="paragraph"&gt;
-&lt;p&gt;It can be obtained from &lt;a href="https://repo.spring.io/milestone"&gt;Spring Milestone repository&lt;/a&gt;:&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="listingblock"&gt;
-&lt;div class="content"&gt;
-&lt;pre class="prettyprint highlight"&gt;&lt;code data-lang="groovy"&gt;dependencyManagement {
-    imports {
-        mavenBom 'org.springframework.integration:spring-integration-bom:6.0.0-M5'
-    }
-}&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="paragraph"&gt;
-&lt;p&gt;Also, Spring Integration &lt;code&gt;5.5.15&lt;/code&gt; has been released with some critical bug fixed and upstream dependencies deprecation resolutions.
-It is recommended to upgrade if you have missed some intermediate releases before or just pull it transitively from upcoming Spring Boot &lt;code&gt;2.6.12&lt;/code&gt; or &lt;code&gt;2.7.4&lt;/code&gt;!&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="paragraph"&gt;
-&lt;p&gt;With the whole Spring portfolio move to Java &lt;code&gt;17&lt;/code&gt; and Jakarta EE, it was a tremendous internal framework refactoring to support new Java language level and &lt;code&gt;jakarta&lt;/code&gt; namespace.
-Plus this includes an upgrade to the latest dependencies which are Jakarta EE compatible or have some breaking changes we couldn&amp;#8217;t move to before.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="paragraph"&gt;
-&lt;p&gt;The notable changes throughout the whole Spring Integration &lt;code&gt;6.0&lt;/code&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="ulist"&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;Spring AOT support - a lot was reworked internally in the framework to satisfy native images expectations and some reflection, proxy and serialization hints are exposed.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;GraphQL support - a new &lt;code&gt;spring-integration-graphql&lt;/code&gt; module has been added.
-It is fully based on a new in portfolio &lt;a href="https://spring.io/projects/spring-graphql"&gt;Spring for GraphQL&lt;/a&gt; project and its &lt;code&gt;GraphQlMessageHandler&lt;/code&gt; is a reactive implementation of the outbound gateway and can perform all &lt;code&gt;query&lt;/code&gt;, &lt;code&gt;mutation&lt;/code&gt; &amp;amp; &lt;code&gt;subscription&lt;/code&gt; GraphQL operations.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;The MQTT module now provides a &lt;code&gt;ClientManager&lt;/code&gt; abstraction to allow to share the same MQTT client for different channel adapters.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;The &lt;code&gt;spring-integration-smb&lt;/code&gt; and &lt;code&gt;spring-integration-hazelcast&lt;/code&gt; &lt;a href="https://github.com/spring-projects/spring-integration-extensions"&gt;extensions&lt;/a&gt; have been migrated to the core project for better community visibility.
-We are planing to migrate more extensions to achieve a better developer experience and maintenance goals.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;A &lt;code&gt;PostgresSubscribableChannel&lt;/code&gt; has been introduced to rely on the native PostgreSQL push notifications feature.
-This way an interaction with a &lt;code&gt;JdbcChannelMessageStore&lt;/code&gt; is not pollable, but rather a plain subscription where we pull a message from the DB whenever a notification happens from PostgreSQL.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Micrometer Observability - an &lt;code&gt;ObservationRegistry&lt;/code&gt; instrumentation infrastructure has been added.
-The &lt;code&gt;AbstractMessageHandler&lt;/code&gt; now emits a &lt;code&gt;CONSUMER&lt;/code&gt; observations instead of just &lt;code&gt;Timer&lt;/code&gt; when an &lt;code&gt;ObservationRegistry&lt;/code&gt; is injected.
-An &lt;code&gt;ObservationPropagationChannelInterceptor&lt;/code&gt; must be used on async and distributed message channels where we would like to propagate an &lt;code&gt;Observation&lt;/code&gt; from the producer to consumer to continue a trace.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;The &lt;code&gt;IntegrationFlows&lt;/code&gt; factory is now deprecated in favor of the same functionality migrated directly to the &lt;code&gt;IntegrationFlow&lt;/code&gt; interface.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;The RMI module is completely removed in favor of other, more secure network protocols.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Apache Camel support - a new &lt;code&gt;spring-integration-camel&lt;/code&gt; module has been added.
-Its &lt;code&gt;CamelMessageHandler&lt;/code&gt; implementation is aimed for easier calls of Apache Camel routes from Spring Integration flows.
-It is based on a Camel&amp;#8217;s &lt;code&gt;ProducerTemplate&lt;/code&gt; and can perform &lt;code&gt;InOnly&lt;/code&gt;, &lt;code&gt;InOut&lt;/code&gt; and &lt;code&gt;InOptionalOut&lt;/code&gt; exchanges carrying Spring Integration messages to/from Apache Camel routes.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;All the messaging annotations (&lt;code&gt;@ServiceActivator&lt;/code&gt;,&lt;code&gt;@Transformer&lt;/code&gt;, &lt;code&gt;@Splitter&lt;/code&gt; etc.) are now &lt;code&gt;@Repeatable&lt;/code&gt;, so you can use the same POJO method in different integration flows.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;The &lt;code&gt;log()&lt;/code&gt; operator of the &lt;code&gt;IntegrationFlow&lt;/code&gt; is now non-terminal - its ambiguity in the end of flow has been resolved and now the behavior of the flow remains the same if there was no &lt;code&gt;log()&lt;/code&gt; operator.&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;The &lt;code&gt;RedisLockRegistry&lt;/code&gt; can now work in pub-sub mode to mitigate a busy-spin concern whenever it is possible and lock can be obtained immediately on pub-sub notification.&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;div class="paragraph"&gt;
-&lt;p&gt;Also, see a &lt;a href="https://github.com/spring-projects/spring-integration/wiki/Spring-Integration-5.x-to-6.0-Migration-Guide"&gt;Migration Guide&lt;/a&gt; for breaking changes in the framework and its modules.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="paragraph"&gt;
-&lt;p&gt;Give it a try before we go a release candidate in October and you are welcome with any feedback!&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="paragraph"&gt;
-&lt;p&gt;See you in person this December at &lt;a href="https://springone.io/2022/sessions/whats-new-in-spring-integration-60"&gt;SpringOne&lt;/a&gt; to discuss these and other Spring Integration features!&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="paragraph"&gt;
-&lt;p&gt;Cheers,&amp;#160;&lt;br&gt;
-Artem&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="paragraph"&gt;
-&lt;p&gt;&lt;a href="http://projects.spring.io/spring-integration/"&gt;Project Page&lt;/a&gt; | &lt;a href="https://github.com/spring-projects/spring-integration/issues"&gt;GitHub Issues&lt;/a&gt; | &lt;a href="https://github.com/spring-projects/spring-integration/blob/master/CONTRIBUTING.adoc"&gt;Contributing&lt;/a&gt; | &lt;a href="http://stackoverflow.com/questions/tagged/spring-integration"&gt;Help&lt;/a&gt; | &lt;a href="https://gitter.im/spring-projects/spring-integration"&gt;Chat&lt;/a&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
-  </entry>
-  <entry>
-    <title>Spring Authorization Server 1.0.0-M2 available now</title>
-    <link rel="alternate" href="https://spring.io/blog/2022/09/21/spring-authorization-server-1-0-0-m2-available-now" />
-    <category term="releases" label="Releases" />
-    <author>
-      <name>Joe Grandja</name>
-    </author>
-    <id>tag:spring.io,2022-09-20:4920</id>
-    <updated>2022-09-21T14:00:00Z</updated>
-    <content type="html">&lt;div class="paragraph"&gt;
-&lt;p&gt;On behalf of the team and everyone who has contributed, it is my pleasure to announce the general availability of Spring Authorization Server 1.0.0-M2.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="paragraph"&gt;
-&lt;p&gt;You can download it from &lt;a href="https://repo.spring.io/milestone"&gt;repo.spring.io&lt;/a&gt; milestone repository by using the module coordinates:&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="listingblock"&gt;
-&lt;div class="content"&gt;
-&lt;pre class="prettyprint highlight"&gt;&lt;code&gt;implementation 'org.springframework.security:spring-security-oauth2-authorization-server:1.0.0-M2'&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="paragraph"&gt;
-&lt;p&gt;See the &lt;a href="https://github.com/spring-projects/spring-authorization-server/releases/tag/1.0.0-M2"&gt;release notes&lt;/a&gt; for complete details.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="paragraph"&gt;
-&lt;p&gt;To get started using Spring Authorization Server, see the &lt;a href="https://docs.spring.io/spring-authorization-server/docs/current/reference/html/getting-started.html"&gt;Getting Started&lt;/a&gt; chapter of the reference documentation and the &lt;a href="https://github.com/spring-projects/spring-authorization-server/tree/main/samples"&gt;samples&lt;/a&gt; to become familiar with setup and configuration.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="paragraph"&gt;
-&lt;p&gt;We would love to gather your feedback as we strive to improve and build upon this release.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="paragraph"&gt;
-&lt;p&gt;&lt;a href="https://spring.io/projects/spring-authorization-server"&gt;Project Page&lt;/a&gt; | &lt;a href="https://github.com/spring-projects/spring-authorization-server/issues"&gt;GitHub Issues&lt;/a&gt; | &lt;a href="https://app.zenhub.com/workspaces/authorization-server-5e8f3182b5e8f5841bfc4902/board?repos=248032165"&gt;ZenHub Board&lt;/a&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
-  </entry>
-  <entry>
-    <title>Spring Authorization Server 0.4.0-M2 available now</title>
-    <link rel="alternate" href="https://spring.io/blog/2022/09/21/spring-authorization-server-0-4-0-m2-available-now" />
-    <category term="releases" label="Releases" />
-    <author>
-      <name>Joe Grandja</name>
-    </author>
-    <id>tag:spring.io,2022-09-20:4919</id>
-    <updated>2022-09-21T14:00:00Z</updated>
-    <content type="html">&lt;div class="paragraph"&gt;
-&lt;p&gt;On behalf of the team and everyone who has contributed, it is my pleasure to announce the general availability of Spring Authorization Server 0.4.0-M2.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="paragraph"&gt;
-&lt;p&gt;You can download it from &lt;a href="https://repo.spring.io/milestone"&gt;repo.spring.io&lt;/a&gt; milestone repository by using the module coordinates:&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="listingblock"&gt;
-&lt;div class="content"&gt;
-&lt;pre class="prettyprint highlight"&gt;&lt;code&gt;implementation 'org.springframework.security:spring-security-oauth2-authorization-server:0.4.0-M2'&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="paragraph"&gt;
-&lt;p&gt;See the &lt;a href="https://github.com/spring-projects/spring-authorization-server/releases/tag/0.4.0-M2"&gt;release notes&lt;/a&gt; for complete details.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="paragraph"&gt;
-&lt;p&gt;To get started using Spring Authorization Server, see the &lt;a href="https://docs.spring.io/spring-authorization-server/docs/current/reference/html/getting-started.html"&gt;Getting Started&lt;/a&gt; chapter of the reference documentation and the &lt;a href="https://github.com/spring-projects/spring-authorization-server/tree/0.4.x/samples"&gt;samples&lt;/a&gt; to become familiar with setup and configuration.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="paragraph"&gt;
-&lt;p&gt;We would love to gather your feedback as we strive to improve and build upon this release.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="paragraph"&gt;
-&lt;p&gt;&lt;a href="https://spring.io/projects/spring-authorization-server"&gt;Project Page&lt;/a&gt; | &lt;a href="https://github.com/spring-projects/spring-authorization-server/issues"&gt;GitHub Issues&lt;/a&gt; | &lt;a href="https://app.zenhub.com/workspaces/authorization-server-5e8f3182b5e8f5841bfc4902/board?repos=248032165"&gt;ZenHub Board&lt;/a&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
-  </entry>
-  <entry>
-    <title>Spring Session 2022.0.0-M3 Released</title>
-    <link rel="alternate" href="https://spring.io/blog/2022/09/20/spring-session-2022-0-0-m3-released" />
-    <category term="engineering" label="Engineering" />
-    <author>
-      <name>Rob Winch</name>
-    </author>
-    <id>tag:spring.io,2022-09-20:4918</id>
-    <updated>2022-09-21T04:06:00Z</updated>
-    <content type="html">&lt;p&gt;On behalf of the team, I’m pleased to announce the release of Spring Session &lt;code&gt;2022.0.0-M3&lt;/code&gt;. These releases deliver, enhancements, bug fixes, and dependency upgrades.&lt;br/&gt;For your convenience, Spring Boot will pick up these artifacts with its upcoming releases.&lt;/p&gt;
-&lt;p&gt;The following modules were updated as part of &lt;code&gt;2022.0.0-M3&lt;/code&gt;:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Spring Session Core &lt;code&gt;3.0.0-M4&lt;/code&gt; - &lt;a href="https://github.com/spring-projects/spring-session/releases/tag/3.0.0-M4"&gt;release notes&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;Spring Session Data Redis &lt;code&gt;3.0.0-M4&lt;/code&gt; - &lt;a href="https://github.com/spring-projects/spring-session/releases/tag/3.0.0-M4"&gt;release notes&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;Spring Session JDBC &lt;code&gt;3.0.0-M4&lt;/code&gt; - &lt;a href="https://github.com/spring-projects/spring-session/releases/tag/3.0.0-M4"&gt;release notes&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;Spring Session Hazelcast &lt;code&gt;3.0.0-M4&lt;/code&gt; - &lt;a href="https://github.com/spring-projects/spring-session/releases/tag/3.0.0-M4"&gt;release notes&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
-  </entry>
-  <entry>
-    <title>Spring Cloud Dataflow 2.10.0-M2 Released</title>
-    <link rel="alternate" href="https://spring.io/blog/2022/09/20/spring-cloud-dataflow-2-10-0-m2-released" />
-    <category term="releases" label="Releases" />
-    <author>
-      <name>Chris Bono</name>
-    </author>
-    <id>tag:spring.io,2022-09-20:4917</id>
-    <updated>2022-09-20T19:00:00Z</updated>
-    <content type="html">&lt;p&gt;On behalf of the team and everyone who has contributed, I’m happy to announce that Spring Cloud Dataflow &lt;code&gt;2.10.0-M2&lt;/code&gt; has been released and is now available from &lt;a href="https://repo.spring.io/milestone"&gt;https://repo.spring.io/milestone&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;This release contains an update of the Spring Boot version and adds back in support for MySQL. See the &lt;a href="https://github.com/spring-cloud/spring-cloud-dataflow/releases/tag/v2.10.0-M2"&gt;release notes&lt;/a&gt; for more information.&lt;/p&gt;&lt;h2&gt;&lt;a href="#stay-in-touch-hellip" class="anchor" name="stay-in-touch-hellip"&gt;&lt;/a&gt;Stay in touch&amp;hellip;&lt;/h2&gt;
-&lt;p&gt;As always, we welcome feedback and contributions, so please reach out to us on &lt;a href="https://stackoverflow.com/questions/tagged/spring-cloud-dataflow"&gt;Stackoverflow&lt;/a&gt; or &lt;a href="https://github.com/spring-cloud/spring-cloud-dataflow/issues"&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
 &lt;!-- rendered by Sagan Renderer Service --&gt;</content>
   </entry>
 </feed>
