@@ -5,7 +5,50 @@
   <link rel="self" href="https://spring.io/blog.atom" />
   <id>http://spring.io/blog.atom</id>
   <icon>https://spring.io/favicon.ico</icon>
-  <updated>2022-10-12T21:00:00Z</updated>
+  <updated>2022-10-13T08:00:00Z</updated>
+  <entry>
+    <title>Spring Batch 5.0.0-M8 is out!</title>
+    <link rel="alternate" href="https://spring.io/blog/2022/10/13/spring-batch-5-0-0-m8-is-out" />
+    <category term="releases" label="Releases" />
+    <author>
+      <name>Mahmoud Ben Hassine</name>
+    </author>
+    <id>tag:spring.io,2022-10-13:4945</id>
+    <updated>2022-10-13T08:00:00Z</updated>
+    <content type="html">&lt;p&gt;On behalf of the team and all contributors, I am pleased to announce that Spring Batch &lt;code&gt;5.0.0-M8&lt;/code&gt; is now available from our &lt;a href="https://repo.spring.io/milestone"&gt;milestone repository&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In this milestone, we introduced two main changes:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;New default execution context serialization format&lt;/li&gt;
+  &lt;li&gt;SystemCommandTasklet enhancements&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This blog post walks through these two major changes in details. For the complete list of changes,&lt;br/&gt;please check the &lt;a href="https://github.com/spring-projects/spring-batch/releases/tag/5.0.0-M8"&gt;release notes&lt;/a&gt;.&lt;/p&gt;&lt;h2&gt;&lt;a href="#new-default-execution-context-serialization-format" class="anchor" name="new-default-execution-context-serialization-format"&gt;&lt;/a&gt;New default execution context serialization format&lt;/h2&gt;
+&lt;p&gt;In this milestone release, the &lt;code&gt;DefaultExecutionContextSerializer&lt;/code&gt; was updated to serialize/deserialize the context to/from Base64.&lt;/p&gt;
+&lt;p&gt;Moreover, the default &lt;code&gt;ExecutionContextSerializer&lt;/code&gt; configured by &lt;code&gt;@EnableBatchProcessing&lt;/code&gt; or &lt;code&gt;DefaultBatchConfiguration&lt;/code&gt; was changed from &lt;code&gt;JacksonExecutionContextStringSerializer&lt;/code&gt; to &lt;code&gt;DefaultExecutionContextSerializer&lt;/code&gt;. The dependency to Jackson was made optional. In order to use the &lt;code&gt;JacksonExecutionContextStringSerializer&lt;/code&gt;, &lt;code&gt;jackson-core&lt;/code&gt; should be added to the classpath.&lt;/p&gt;&lt;h2&gt;&lt;a href="#systemcommandtasklet-enhancements" class="anchor" name="systemcommandtasklet-enhancements"&gt;&lt;/a&gt;SystemCommandTasklet enhancements&lt;/h2&gt;
+&lt;p&gt;The &lt;code&gt;SystemCommandTasklet&lt;/code&gt; has been revisited in this release and was changed as follows:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;
+  &lt;p&gt;A new strategy interface named &lt;code&gt;CommandRunner&lt;/code&gt; was introduced in order to decouple the command execution from the tasklet execution. The default implementation is the &lt;code&gt;JvmCommandRunner&lt;/code&gt; which uses the &lt;code&gt;java.lang.Runtime#exec&lt;/code&gt; API to run system commands. This interface can be implemented to use any other API to run system commands.&lt;/p&gt;&lt;/li&gt;
+  &lt;li&gt;
+  &lt;p&gt;The method that runs the command now accepts an array of &lt;code&gt;String&lt;/code&gt;s representing the command and its arguments. There is no need to tokenize the command or do any pre-processing anymore. This change makes the API more intuitive, and less prone to errors.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;h2&gt;&lt;a href="#feedback" class="anchor" name="feedback"&gt;&lt;/a&gt;Feedback&lt;/h2&gt;
+&lt;p&gt;I would like to thank all contributors who had a role in this release! As we continue&lt;br/&gt;our work on Spring Batch 5, we look forward to your feedback on &lt;a href="https://github.com/spring-projects/spring-batch/issues"&gt;Github&lt;/a&gt;, &lt;a href="https://twitter.com/springbatch"&gt;Twitter&lt;/a&gt; and &lt;a href="https://stackoverflow.com/questions/tagged/spring-batch"&gt;StackOverflow&lt;/a&gt;.&lt;/p&gt;
+&lt;hr/&gt;
+&lt;p&gt;&lt;a href="https://spring.io/projects/spring-batch"&gt;Spring Batch Home&lt;/a&gt;|&lt;a href="https://github.com/spring-projects/spring-batch"&gt;Source on Github&lt;/a&gt;|&lt;a href="https://docs.spring.io/spring-batch/docs/5.0.0-M8/reference/html/index-single.html"&gt;Reference documentation&lt;/a&gt;&lt;/p&gt;
+&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
+  </entry>
+  <entry>
+    <title>A Bootiful Podcast: Google mad scientist Josh Suereth on Observability with OpenTelemetry, building better build tools, and so much more</title>
+    <link rel="alternate" href="https://spring.io/blog/2022/10/12/a-bootiful-podcast-google-mad-scientist-josh-suereth-on-observability-with-opentelemetry-building-better-build-tools-and-so-much-more" />
+    <category term="engineering" label="Engineering" />
+    <author>
+      <name>Josh Long</name>
+    </author>
+    <id>tag:spring.io,2022-10-13:4944</id>
+    <updated>2022-10-13T06:00:00Z</updated>
+    <content type="html">&lt;p&gt;Hi, Spring fans! In this installment Josh Long (@starbuxman) looks at the latest and greatest in Spring Boot 3 AOT, then talks to Google&amp;rsquo;s Josh Suereth (@jsuereth) about observability with OpenTelemetry, building better build tools, and so much more. &lt;/p&gt;
+&lt;iframe title="Google mad scientist Josh Suereth on Observability with OpenTelemetry, building better build tools, and so much more " allowtransparency="true" height="150" width="100%" style="border: none; min-width: min(100%, 430px);" scrolling="no" data-name="pb-iframe-player" src="https://www.podbean.com/player-v2/?i=jsrsi-12e8472-pb&amp;from=pb6admin&amp;share=1&amp;download=1&amp;rtl=0&amp;fonts=Arial&amp;skin=1&amp;font-color=&amp;logo_link=episode_page&amp;btn-skin=7"&gt;&lt;/iframe&gt;
+&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
+  </entry>
   <entry>
     <title>Observability with Spring Boot 3</title>
     <link rel="alternate" href="https://spring.io/blog/2022/10/12/observability-with-spring-boot-3" />
@@ -1719,38 +1762,6 @@ dependencies {&#xD;
     <content type="html">&lt;p&gt;Hi, Spring fans! In this installment, &lt;a href="https://twitter.com/starbuxman"&gt;Josh Long (@starbuxman)&lt;/a&gt; talks to his friend, fellow Java Champion, and director of developer relations and strategy at Couchbase, &lt;a href="https://twitter.com/ldoguin"&gt;Laurent Doguin (@ldoguin)&lt;/a&gt;&lt;/p&gt;
 &lt;iframe title="Couchbase and Cloud legend Laurent Doguin " allowtransparency="true" height="150" width="100%" style="border: none; min-width: min(100%, 430px);" scrolling="no" data-name="pb-iframe-player" src="https://www.podbean.com/player-v2/?i=tzuv5-12cdc22-pb&amp;from=pb6admin&amp;share=1&amp;download=1&amp;rtl=0&amp;fonts=Arial&amp;skin=1&amp;font-color=&amp;logo_link=episode_page&amp;btn-skin=7"&gt;&lt;/iframe&gt;
 &lt;p&gt;&lt;strong&gt;SpringOne 2022&lt;/strong&gt; is almost here! This is our first in-person event since the pandemic &lt;em&gt;and&lt;/em&gt; it&amp;rsquo;s when we release Spring Framework 6 and Spring Boot 3, the next generation of Spring and Spring Boot respectively. It&amp;rsquo;s running 6-8 December in my sunny San Francisco, CA! Register now at &lt;a href="https://springone.io"&gt;SpringOne.io&lt;/a&gt; and use the code &lt;code&gt;S1VM22_Advocate_200&lt;/code&gt; to get $200 off the current registration price.&lt;/p&gt;
-&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
-  </entry>
-  <entry>
-    <title>Spring Boot 2.7.4 available now</title>
-    <link rel="alternate" href="https://spring.io/blog/2022/09/22/spring-boot-2-7-4-available-now" />
-    <category term="releases" label="Releases" />
-    <author>
-      <name>Andy Wilkinson</name>
-    </author>
-    <id>tag:spring.io,2022-09-22:4924</id>
-    <updated>2022-09-22T12:06:26Z</updated>
-    <content type="html">&lt;p&gt;On behalf of the team and everyone who has contributed, I&amp;rsquo;m happy to announce that Spring Boot &lt;code&gt;2.7.4&lt;/code&gt; has been released and is now available from Maven Central.&lt;/p&gt;
-&lt;p&gt;This release includes &lt;a href="https://github.com/spring-projects/spring-boot/releases/tag/v2.7.4"&gt;48 bug fixes, documentation improvements, and dependency upgrades&lt;/a&gt;. Thanks to all those who have contributed with issue reports and pull requests.&lt;/p&gt;&lt;h3&gt;&lt;a href="#java-19" class="anchor" name="java-19"&gt;&lt;/a&gt;Java 19&lt;/h3&gt;
-&lt;p&gt;Following its GA release earlier this week, Java 19 is now supported.&lt;/p&gt;&lt;h3&gt;&lt;a href="#how-can-you-help" class="anchor" name="how-can-you-help"&gt;&lt;/a&gt;How can you help?&lt;/h3&gt;
-&lt;p&gt;If you&amp;rsquo;re interested in helping out, check out the &lt;a href="https://github.com/spring-projects/spring-boot/labels/status%3A%20ideal-for-contribution"&gt;&amp;ldquo;ideal for contribution&amp;rdquo; tag&lt;/a&gt; in the issue repository. If you have general questions, please ask on &lt;a href="https://stackoverflow.com"&gt;stackoverflow.com&lt;/a&gt; using the &lt;a href="https://stackoverflow.com/tags/spring-boot"&gt;&lt;code&gt;spring-boot&lt;/code&gt; tag&lt;/a&gt; or chat with the community on &lt;a href="https://gitter.im/spring-projects/spring-boot"&gt;Gitter&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;a href="https://spring.io/projects/spring-boot/"&gt;Project Page&lt;/a&gt; | &lt;a href="https://github.com/spring-projects/spring-boot"&gt;GitHub&lt;/a&gt; | &lt;a href="https://github.com/spring-projects/spring-boot/issues"&gt;Issues&lt;/a&gt; | &lt;a href="https://docs.spring.io/spring-boot/docs/2.7.4/reference/html"&gt;Documentation&lt;/a&gt; | &lt;a href="https://stackoverflow.com/questions/tagged/spring-boot"&gt;Stack Overflow&lt;/a&gt; | &lt;a href="https://gitter.im/spring-projects/spring-boot"&gt;Gitter&lt;/a&gt;&lt;/p&gt;
-&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
-  </entry>
-  <entry>
-    <title>Spring Boot 2.6.12 available now</title>
-    <link rel="alternate" href="https://spring.io/blog/2022/09/22/spring-boot-2-6-12-available-now" />
-    <category term="releases" label="Releases" />
-    <author>
-      <name>Andy Wilkinson</name>
-    </author>
-    <id>tag:spring.io,2022-09-22:4923</id>
-    <updated>2022-09-22T09:58:00Z</updated>
-    <content type="html">&lt;p&gt;On behalf of the team and everyone who has contributed, I&amp;rsquo;m happy to announce that Spring Boot &lt;code&gt;2.6.12&lt;/code&gt; has been released and is now available from Maven Central.&lt;/p&gt;
-&lt;p&gt;This release includes &lt;a href="https://github.com/spring-projects/spring-boot/releases/tag/v2.6.12"&gt;33 bug fixes, documentation improvements, and dependency upgrades&lt;/a&gt;. Thanks to all those who have contributed with issue reports and pull requests.&lt;/p&gt;&lt;h3&gt;&lt;a href="#java-19" class="anchor" name="java-19"&gt;&lt;/a&gt;Java 19&lt;/h3&gt;
-&lt;p&gt;Following its GA release earlier this week, Java 19 is now supported.&lt;/p&gt;&lt;h3&gt;&lt;a href="#how-can-you-help" class="anchor" name="how-can-you-help"&gt;&lt;/a&gt;How can you help?&lt;/h3&gt;
-&lt;p&gt;If you&amp;rsquo;re interested in helping out, check out the &lt;a href="https://github.com/spring-projects/spring-boot/labels/status%3A%20ideal-for-contribution"&gt;&amp;ldquo;ideal for contribution&amp;rdquo; tag&lt;/a&gt; in the issue repository. If you have general questions, please ask on &lt;a href="https://stackoverflow.com"&gt;stackoverflow.com&lt;/a&gt; using the &lt;a href="https://stackoverflow.com/tags/spring-boot"&gt;&lt;code&gt;spring-boot&lt;/code&gt; tag&lt;/a&gt; or chat with the community on &lt;a href="https://gitter.im/spring-projects/spring-boot"&gt;Gitter&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;a href="https://spring.io/projects/spring-boot/"&gt;Project Page&lt;/a&gt; | &lt;a href="https://github.com/spring-projects/spring-boot"&gt;GitHub&lt;/a&gt; | &lt;a href="https://github.com/spring-projects/spring-boot/issues"&gt;Issues&lt;/a&gt; | &lt;a href="https://docs.spring.io/spring-boot/docs/2.6.12/reference/html"&gt;Documentation&lt;/a&gt; | &lt;a href="https://stackoverflow.com/questions/tagged/spring-boot"&gt;Stack Overflow&lt;/a&gt; | &lt;a href="https://gitter.im/spring-projects/spring-boot"&gt;Gitter&lt;/a&gt;&lt;/p&gt;
 &lt;!-- rendered by Sagan Renderer Service --&gt;</content>
   </entry>
 </feed>

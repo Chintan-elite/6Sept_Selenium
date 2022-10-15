@@ -11,4 +11,7 @@
     <fullyQualifiedTypeName name="oops.Employee"/>
     <fullyQualifiedTypeName name="oops.Pen1"/>
     <fullyQualifiedTypeName name="oops.NoteBook"/>
+    <fullyQualifiedTypeName name="oops.Sample"/>
+    <fullyQualifiedTypeName name="oops.B"/>
+    <fullyQualifiedTypeName name="oops.AbsImpl"/>
 </qualifiedTypeNameHistroy>
