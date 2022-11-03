@@ -34,9 +34,12 @@ public class O007_Inheritance
 
 		Pen1 p = new Pen1();
 		p.display();
-
+		
 		NoteBook n1 = new NoteBook();
 		n1.company = "classmate";
 		n1.details();
+		
+		
+		
 	}
 }
