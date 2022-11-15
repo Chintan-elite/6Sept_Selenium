@@ -28,6 +28,7 @@ public class S003_registraation {
 		
 		WebElement day = driver.findElement(By.id("day"));
 		Select days = new Select(day);
+		
 		days.selectByVisibleText("10");
 		
 		WebElement month =   driver.findElement(By.id("month"));
