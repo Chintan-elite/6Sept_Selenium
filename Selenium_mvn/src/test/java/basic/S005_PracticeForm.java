@@ -46,9 +46,6 @@ public class S005_PracticeForm {
 			commands.selectByVisibleText("Wait Commands");
 			
 			
-			
-			
-			
 			try {
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {

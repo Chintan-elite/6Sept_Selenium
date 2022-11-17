@@ -5,7 +5,81 @@
   <link rel="self" href="https://spring.io/blog.atom" />
   <id>http://spring.io/blog.atom</id>
   <icon>https://spring.io/favicon.ico</icon>
-  <updated>2022-11-11T00:00:00Z</updated>
+  <updated>2022-11-16T11:31:54Z</updated>
+  <entry>
+    <title>Spring Framework 6.0 goes GA</title>
+    <link rel="alternate" href="https://spring.io/blog/2022/11/16/spring-framework-6-0-goes-ga" />
+    <category term="releases" label="Releases" />
+    <author>
+      <name>Juergen Hoeller</name>
+    </author>
+    <id>tag:spring.io,2022-11-11:4992</id>
+    <updated>2022-11-16T11:31:54Z</updated>
+    <content type="html">&lt;p&gt;Dear Spring community,&lt;/p&gt;
+&lt;p&gt;It is my pleasure to announce that Spring Framework 6.0.0 is generally available from Maven Central now! This is the start of a new framework generation for 2023 and beyond, embracing current and upcoming innovations in OpenJDK and the Java ecosystem. At the same time, we carefully designed it as a straightforward upgrade from Spring Framework 5.3.x for modern-day runtime environments.&lt;/p&gt;
+&lt;p&gt;As a major revision of the core framework, Spring Framework 6.0 comes with a Java 17+ baseline and a move to Jakarta EE 9+ (in the &lt;code&gt;jakarta&lt;/code&gt; namespace), with a focus on the recently released Jakarta EE 10 APIs such as Servlet 6.0 and JPA 3.1. This provides access to the latest web containers such as &lt;a href="https://tomcat.apache.org/whichversion.html"&gt;Tomcat 10.1&lt;/a&gt; and the latest persistence providers such as &lt;a href="https://hibernate.org/orm/releases/6.1/"&gt;Hibernate ORM 6.1&lt;/a&gt;. Don&amp;rsquo;t be stuck on Java EE 8, make the leap to the &lt;code&gt;jakarta&lt;/code&gt; namespace, ideally straight to the Jakarta EE 10 level! The upcoming Spring Boot 3.0.0 release includes corresponding managed dependencies for you.&lt;/p&gt;
+&lt;p&gt;Infrastructure-wise, 6.0 introduces a foundation for &lt;a href="https://spring.io/blog/2022/03/22/initial-aot-support-in-spring-framework-6-0-0-m3"&gt;Ahead-Of-Time transformations&lt;/a&gt; and the corresponding AOT processing support for Spring application contexts. This enables first-class support for &lt;a href="https://spring.io/blog/2022/09/26/native-support-in-spring-boot-3-0-0-m5"&gt;GraalVM native images with Spring Boot 3&lt;/a&gt;. You may also explore &lt;a href="https://openjdk.org/jeps/425"&gt;Project Loom&lt;/a&gt;&amp;rsquo;s virtual threads with Spring applications - see &lt;a href="https://spring.io/blog/2022/10/11/embracing-virtual-threads"&gt;&amp;ldquo;Embracing Virtual Threads&amp;rdquo;&lt;/a&gt; - and dive into &lt;a href="https://github.com/CRaC/docs"&gt;Project CRaC&lt;/a&gt; &amp;rsquo;s checkpoint restore approach for faster JVM startups, both of which are in preview at this point but expected to become first-class features for Spring Framework 6.x based applications.&lt;/p&gt;
+&lt;p&gt;There are many further features and refinements available in Spring Framework 6.0, e.g. an &lt;a href="https://docs.spring.io/spring-framework/docs/6.0.0-RC1/reference/html/integration.html#rest-http-interface"&gt;HTTP interface client&lt;/a&gt;, support for &lt;a href="https://docs.spring.io/spring-framework/docs/6.0.0-RC1/reference/html/web.html#mvc-ann-rest-exceptions"&gt;RFC 7807 problem details&lt;/a&gt;, and Micrometer-based observability for HTTP clients. Please see our &lt;a href="https://github.com/spring-projects/spring-framework/wiki/What%27s-New-in-Spring-Framework-6.x/"&gt;What&amp;rsquo;s New page&lt;/a&gt; for a comprehensive overview and give 6.0.0 an early try!&lt;/p&gt;
+&lt;p&gt;Cheers,&lt;br/&gt;Juergen&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://projects.spring.io/spring-framework/"&gt;Project Page&lt;/a&gt; | &lt;a href="https://github.com/spring-projects/spring-framework/milestones"&gt;GitHub&lt;/a&gt; | &lt;a href="https://docs.spring.io/spring-framework/docs/6.0.0/reference/html/"&gt;Documentation&lt;/a&gt;&lt;/p&gt;
+&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
+  </entry>
+  <entry>
+    <title>Spring Framework 5.3.24 available now</title>
+    <link rel="alternate" href="https://spring.io/blog/2022/11/16/spring-framework-5-3-24-available-now" />
+    <category term="releases" label="Releases" />
+    <author>
+      <name>Stéphane Nicoll</name>
+    </author>
+    <id>tag:spring.io,2022-11-16:4996</id>
+    <updated>2022-11-16T08:40:20Z</updated>
+    <content type="html">&lt;p&gt;On behalf of the team and everyone who has contributed, I am pleased to announce that Spring Framework &lt;code&gt;5.3.24&lt;/code&gt; is available now.&lt;/p&gt;
+&lt;p&gt;Spring Framework &lt;code&gt;5.3.24&lt;/code&gt; includes &lt;a href="https://github.com/spring-projects/spring-framework/releases/tag/v5.3.24"&gt;33 fixes and improvements&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://projects.spring.io/spring-framework/"&gt;Project Page&lt;/a&gt; | &lt;a href="https://github.com/spring-projects/spring-framework"&gt;GitHub&lt;/a&gt; | &lt;a href="https://github.com/spring-projects/spring-framework/issues"&gt;Issues&lt;/a&gt; | &lt;a href="https://docs.spring.io/spring-framework/docs/5.3.24/reference/html/"&gt;Documentation&lt;/a&gt;&lt;/p&gt;
+&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
+  </entry>
+  <entry>
+    <title>Spring Cloud Dataflow 2.10.0-RC2 Released</title>
+    <link rel="alternate" href="https://spring.io/blog/2022/11/15/spring-cloud-dataflow-2-10-0-rc2-released" />
+    <category term="releases" label="Releases" />
+    <author>
+      <name>Chris Bono</name>
+    </author>
+    <id>tag:spring.io,2022-11-16:4995</id>
+    <updated>2022-11-15T20:00:00Z</updated>
+    <content type="html">&lt;p&gt;On behalf of the team and everyone who has contributed, I’m happy to announce that Spring Cloud Dataflow &lt;code&gt;2.10.0-RC2&lt;/code&gt; has been released and is now available from &lt;a href="https://repo.spring.io/milestone"&gt;https://repo.spring.io/milestone&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;This release contains an update of the Spring Boot, Spring Framework, and Spring Cloud versions.&lt;br/&gt;See the &lt;a href="https://github.com/spring-cloud/spring-cloud-dataflow/releases/tag/v2.10.0-RC2"&gt;release notes&lt;/a&gt; for more information.&lt;/p&gt;&lt;h2&gt;&lt;a href="#stay-in-touch-hellip" class="anchor" name="stay-in-touch-hellip"&gt;&lt;/a&gt;Stay in touch&amp;hellip;&lt;/h2&gt;
+&lt;p&gt;As always, we welcome feedback and contributions, so please reach out to us on &lt;a href="https://stackoverflow.com/questions/tagged/spring-cloud-dataflow"&gt;Stackoverflow&lt;/a&gt; or &lt;a href="https://github.com/spring-cloud/spring-cloud-dataflow/issues"&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
+  </entry>
+  <entry>
+    <title>This Week in Spring - November 15th, 2022</title>
+    <link rel="alternate" href="https://spring.io/blog/2022/11/15/this-week-in-spring-november-15th-2022" />
+    <category term="engineering" label="Engineering" />
+    <author>
+      <name>Josh Long</name>
+    </author>
+    <id>tag:spring.io,2022-11-15:4994</id>
+    <updated>2022-11-15T08:00:00Z</updated>
+    <content type="html">&lt;p&gt;Hi, Spring fans! How&amp;rsquo;re you doin&amp;rsquo; this fine Tuesday morning? I&amp;rsquo;ve returned home to San Francisco and am up and at &amp;rsquo;em nice and early to catch a flight to Seattle, where I&amp;rsquo;ll speak at the Java User Group tonight. If you&amp;rsquo;re in Seattle, don&amp;rsquo;t miss it!&lt;/p&gt;
+&lt;p&gt;We&amp;rsquo;ve got a ton of cool stuff to get into this week, but let&amp;rsquo;s not bury the lede here: Spring Framework 6 comes out &lt;em&gt;tomorrow&lt;/em&gt;, Wednesday, the 16th of November, 2022! And you know where to go to get the bits: the Spring Initialzr, &lt;a href="https://start.spring.io"&gt;start.spring.io&lt;/a&gt;!&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s dive into this week&amp;rsquo;s roundup!&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Did you see the new Reactor 2022.0.0 release? This release contains integration with Micrometer Tracing, context propagation, and plenty of other improvements. See &lt;a href="https://github.com/reactor/reactor/releases/tag/2022.0.0"&gt;this for more&lt;/a&gt;.&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/11/10/spring-boot-3-0-0-rc2-available-now"&gt;Spring Boot 3.0.0-RC2 available now&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/11/08/spring-cloud-2021-0-5-codename-jubilee-has-been-released"&gt;Spring Cloud 2021.0.5 (codename Jubilee) Has Been Released&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/11/09/spring-framework-6-0-0-rc4-available-now"&gt;Spring Framework 6.0.0-RC4 available now&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/11/09/spring-security-6-0-0-rc2-is-available-now"&gt;Spring Security 6.0.0-RC2 is available now&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://spring.io/blog/2022/11/10/updates-on-spring-cloud-stream-4-0-0-schema-registry-support"&gt;Updates on Spring Cloud Stream 4.0.0 Schema Registry Support&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://chaos.social/@odrotbohm/109330616770047361"&gt;Coming with the RC of Spring Modulith: improved module canvas listing cross-module bean references (first image) and publicly exposed value types (second image).&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://feeds.feedblitz.com/~/719286658/0/baeldung~Kong-Ingress-Controller-with-Spring-Boot"&gt;Kong Ingress Controller with Spring Boot&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://feeds.feedblitz.com/~/718883586/0/baeldung~Mocking-a-Singleton-With-Mockito"&gt;Mocking a Singleton With Mockito&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://open.spotify.com/playlist/5hmeg2ngrrAFbz1Gu05PXi?si=Niq4ASpHTm-fh4_YDfzfow"&gt;Did you know that Jetbrains has a Spotify playlist of music designed for coding called &amp;ldquo;Pure Flow&amp;rdquo;&lt;/a&gt;? I like it!&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://feeds.feedblitz.com/~/719513458/0/baeldung~Spring-EnableMethodSecurity-Annotation"&gt;Spring @EnableMethodSecurity Annotation&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href="https://feeds.feedblitz.com/~/719513462/0/baeldung~SpringRunner-vs-MockitoJUnitRunner"&gt;SpringRunner vs MockitoJUnitRunner&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
+  </entry>
   <entry>
     <title>Spring Boot 3.0.0-RC2 available now</title>
     <link rel="alternate" href="https://spring.io/blog/2022/11/10/spring-boot-3-0-0-rc2-available-now" />
@@ -52,7 +126,7 @@
 	&amp;lt;version&amp;gt;4.0.0-SNAPSHOT&amp;lt;/version&amp;gt;&#xD;
 &amp;lt;/dependency&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;h2&gt;&lt;a href="#using-the-confluent-schema-registry-server-with-spring-cloud-stream-schema-registry-client" class="anchor" name="using-the-confluent-schema-registry-server-with-spring-cloud-stream-schema-registry-client"&gt;&lt;/a&gt;Using the Confluent Schema Registry Server with Spring Cloud Stream Schema Registry Client&lt;/h2&gt;
-&lt;p&gt;Confluent Schema Registry is a popular commercial solution for schema evolution for Kafka-based applications. Spring Cloud Stream AVRO message converters mentioned above can work with the Confluent Schema Registry. For this to work, the application needs to override the &lt;code&gt;SchemaReigsryClient&lt;/code&gt; bean and provide an implementation for &lt;code&gt;ConfluentScheamRegistryClient.&lt;/code&gt; &lt;/p&gt;&lt;h2&gt;&lt;a href="#resources" class="anchor" name="resources"&gt;&lt;/a&gt;Resources&lt;/h2&gt;
+&lt;p&gt;Confluent Schema Registry is a popular commercial solution for schema evolution for Kafka-based applications. Spring Cloud Stream AVRO message converters mentioned above can work with the Confluent Schema Registry. For this to work, the application needs to override the &lt;code&gt;SchemaRegistryClient&lt;/code&gt; bean and provide an implementation for &lt;code&gt;ConfluentSchemaRegistryClient.&lt;/code&gt; &lt;/p&gt;&lt;h2&gt;&lt;a href="#resources" class="anchor" name="resources"&gt;&lt;/a&gt;Resources&lt;/h2&gt;
 &lt;p&gt;We provide a set of sample applications demonstrating all the concepts described in this blog &lt;a href="https://github.com/spring-cloud/spring-cloud-stream/tree/main/samples/spring-cloud-stream-schema-registry-integration"&gt;here&lt;/a&gt;. Please see the &lt;a href="https://github.com/spring-cloud/spring-cloud-stream/blob/main/samples/spring-cloud-stream-schema-registry-integration/README.adoc"&gt;README&lt;/a&gt; for more details. &lt;/p&gt;
 &lt;p&gt;&lt;a href="https://docs.spring.io/spring-cloud-stream/docs/4.0.0-SNAPSHOT/reference/html/spring-cloud-stream-schema-registry.html#spring-cloud-stream-schema-registry-referenc"&gt;Here&lt;/a&gt; is the Schema Registry reference documentation.&lt;/p&gt;&lt;h2&gt;&lt;a href="#conclusion" class="anchor" name="conclusion"&gt;&lt;/a&gt;Conclusion&lt;/h2&gt;
 &lt;p&gt;Spring Cloud Stream &lt;code&gt;4.0.0&lt;/code&gt; brings back the Schema Registry components from previous versions of Spring Cloud Stream. This blog examined the motivations and overview of the re-introduced support. The support available in Spring Cloud Stream may only cover some of the schema evolution use cases. However, the provided schema registry components can support many schema evolution use cases that come under the purview of Spring Cloud Stream applications with a transport-neutral value add. &lt;/p&gt;
@@ -506,347 +580,6 @@ compile &amp;#39;org.springframework.cloud:spring-cloud-starter-netflix-eureka-c
   &lt;li&gt;Check out my Devoxx UK talk, also voted one of the top videos at Devoxx UK: &lt;a href="https://www.youtube.com/watch?v=2Wnp6FdrTbI"&gt;Spring.next by Josh Long&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href="https://feeds.feedblitz.com/~/717085636/0/baeldung~TLS-Setup-in-MySQL-and-Spring-Boot-Application"&gt;TLS Setup in MySQL and Spring Boot Application&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
-  </entry>
-  <entry>
-    <title>Spring Security 5.7.5 and 5.6.9 available now</title>
-    <link rel="alternate" href="https://spring.io/blog/2022/10/31/spring-security-5-7-5-and-5-6-9-available-now" />
-    <category term="releases" label="Releases" />
-    <author>
-      <name>Steve Riesenberg</name>
-    </author>
-    <id>tag:spring.io,2022-10-31:4974</id>
-    <updated>2022-10-31T17:04:00Z</updated>
-    <content type="html">&lt;div class="paragraph"&gt;
-&lt;p&gt;On behalf of the team and everyone who has contributed, I am pleased to announce that Spring Security 5.7.5 and 5.6.9 are available now. In both cases the releases are composed of bug fixes.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="paragraph"&gt;
-&lt;p&gt;To learn more, please visit the &lt;a href="https://github.com/spring-projects/spring-security/releases/tag/5.7.5"&gt;5.7.5&lt;/a&gt; and
- &lt;a href="https://github.com/spring-projects/spring-security/releases/tag/5.6.9"&gt;5.6.9&lt;/a&gt; release summaries.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="paragraph"&gt;
-&lt;p&gt;&lt;a href="http://projects.spring.io/spring-security/"&gt;Project Site&lt;/a&gt; | &lt;a href="https://docs.spring.io/spring-security/reference/"&gt;Reference&lt;/a&gt; | &lt;a href="http://stackoverflow.com/questions/tagged/spring-security"&gt;Help&lt;/a&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
-  </entry>
-  <entry>
-    <title>CVE-2022-31690: Privilege Escalation in spring-security-oauth2-client</title>
-    <link rel="alternate" href="https://spring.io/blog/2022/10/31/cve-2022-31690-privilege-escalation-in-spring-security-oauth2-client" />
-    <category term="engineering" label="Engineering" />
-    <author>
-      <name>Steve Riesenberg</name>
-    </author>
-    <id>tag:spring.io,2022-10-28:4973</id>
-    <updated>2022-10-31T16:41:00Z</updated>
-    <content type="html">&lt;div class="paragraph"&gt;
-&lt;p&gt;Spring Security &lt;a href="https://github.com/spring-projects/spring-security/releases/tag/5.6.9"&gt;5.6.9&lt;/a&gt; and &lt;a href="https://github.com/spring-projects/spring-security/releases/tag/5.7.5"&gt;5.7.5&lt;/a&gt; released on &lt;a href="https://spring.io/blog/2022/10/31/spring-security-5-7-5-and-5-6-9-available-now"&gt;October 31st, 2022&lt;/a&gt; included a fix for &lt;a href="https://tanzu.vmware.com/security/cve-2022-31690"&gt;CVE-2022-31690&lt;/a&gt; affecting the mapping of authorized scopes in spring-security-oauth2-client. Users are encouraged to update as soon as possible.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="sect1"&gt;
-&lt;h2 id="impact"&gt;&lt;a class="anchor" href="#impact"&gt;&lt;/a&gt;Impact&lt;/h2&gt;
-&lt;div class="sectionbody"&gt;
-&lt;div class="paragraph"&gt;
-&lt;p&gt;Users who have applied the mitigation should take note of the following impact:&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="paragraph"&gt;
-&lt;p&gt;No authorized scopes are mapped to the principal (current user) when the Authorization Server (AS) responds to the OAuth2 Access Token Response with an empty or missing &lt;code&gt;scope&lt;/code&gt; parameter.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="paragraph"&gt;
-&lt;p&gt;If you are affected by this vulnerability, users will not be granted any authorities beginning with &lt;code&gt;SCOPE_&lt;/code&gt; when the AS does not return scopes. Only the special authority &lt;code&gt;ROLE_USER&lt;/code&gt; is given to the principal.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="admonitionblock note"&gt;
-&lt;table&gt;
-&lt;tr&gt;
-&lt;td class="icon"&gt;
-&lt;div class="title"&gt;Note&lt;/div&gt;
-&lt;/td&gt;
-&lt;td class="content"&gt;
-Beginning with 6.0, the special authority is changed to &lt;code&gt;OAUTH2_USER&lt;/code&gt; (or &lt;code&gt;OIDC_USER&lt;/code&gt;). See &lt;a href="https://docs.spring.io/spring-security/reference/6.0/servlet/oauth2/login/advanced.html#oauth2login-advanced-map-authorities-grantedauthoritiesmapper"&gt;Using a GrantedAuthoritiesMapper&lt;/a&gt; in the 6.0 reference documentation for more information.
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/table&gt;
-&lt;/div&gt;
-&lt;div class="paragraph"&gt;
-&lt;p&gt;If additional authorities are required for your application, you should register a &lt;code&gt;GrantedAuthoritiesMapper&lt;/code&gt; &lt;code&gt;@Bean&lt;/code&gt; to provide the needed authorities, as in the following example:&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class="listingblock"&gt;
-&lt;div class="content"&gt;
-&lt;pre class="prettyprint highlight"&gt;&lt;code data-lang="java"&gt;@Configuration
-@EnableWebSecurity
-public class OAuth2LoginSecurityConfig {
-
-	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http
-			.authorizeHttpRequests((authorize) -&amp;gt; authorize
-				.mvcMatchers(HttpMethod.GET, "/messages").hasAuthority("SCOPE_read")
-				// ...
-				.anyRequest().authenticated()
-			)
-			.oauth2Login(Customizer.withDefaults());
-		return http.build();
-	}
-
-	@Bean
-	public GrantedAuthoritiesMapper userAuthoritiesMapper() {
-		return (authorities) -&amp;gt; {
-			if (!authorities.isEmpty() &amp;amp;&amp;amp; authorities.stream()
-					.map(GrantedAuthority::getAuthority)
-					.anyMatch(authority -&amp;gt; authority.startsWith("SCOPE_"))) {
-				// AS returned scopes that are mapped to SCOPE_ by Spring Security
-				return authorities;
-			}
-
-			// AS returned no scopes, either because none were granted or because requested == granted
-			// See https://www.rfc-editor.org/rfc/rfc6749#section-5.1 and your AS documentation
-			// You can access the ID Token or UserInfo attributes to map authorities based on the user:
-
-			Set&amp;lt;GrantedAuthority&amp;gt; grantedAuthorities = new HashSet&amp;lt;&amp;gt;();
-			authorities.forEach(authority -&amp;gt; {
-				if (OidcUserAuthority.class.isInstance(authority)) {
-					OidcUserAuthority oidcUserAuthority = (OidcUserAuthority) authority;
-					OidcIdToken idToken = oidcUserAuthority.getIdToken();
-					// ...
-				} else if (OAuth2UserAuthority.class.isInstance(authority)) {
-					OAuth2UserAuthority oauth2UserAuthority = (OAuth2UserAuthority) authority;
-					Map&amp;lt;String, Object&amp;gt; userAttributes = oauth2UserAuthority.getAttributes();
-					// ...
-				}
-			});
-
-			return grantedAuthorities;
-
-			// Alternatively, provide a fallback set of authorities that make sense for your application
-			// return AuthorityUtils.createAuthorityList("ROLE_USER", "SCOPE_read");
-		};
-	}
-
-}&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class="admonitionblock warning"&gt;
-&lt;table&gt;
-&lt;tr&gt;
-&lt;td class="icon"&gt;
-&lt;div class="title"&gt;Warning&lt;/div&gt;
-&lt;/td&gt;
-&lt;td class="content"&gt;
-It is &lt;strong&gt;not recommended&lt;/strong&gt; to simply map authorities from the &lt;code&gt;ClientRegistration&lt;/code&gt;.
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
-  </entry>
-  <entry>
-    <title>CVE-2022-31692: Authorization rules can be bypassed via forward or include in Spring Security</title>
-    <link rel="alternate" href="https://spring.io/blog/2022/10/31/cve-2022-31692-authorization-rules-can-be-bypassed-via-forward-or-include-in-spring-security" />
-    <category term="engineering" label="Engineering" />
-    <author>
-      <name>Marcus Hert Da Coregio</name>
-    </author>
-    <id>tag:spring.io,2022-10-27:4971</id>
-    <updated>2022-10-31T16:41:00Z</updated>
-    <content type="html">&lt;div class="paragraph"&gt;
-&lt;p&gt;Spring Security 5.6.9 and 5.7.5 released on October 31st, 2022 included a fix for &lt;a href="https://tanzu.vmware.com/security/cve-2022-31692"&gt;CVE-2022-31692&lt;/a&gt; affecting the &lt;code&gt;AuthorizationFilter&lt;/code&gt;. Users are encouraged to update as soon as possible.&lt;/p&gt;
-&lt;/div&gt;
-&lt;!-- rendered by Sagan Renderer Service --&gt;</content>
-  </entry>
-  <entry>
-    <title>Spring Cloud 2022.0.0-RC1 Is Available</title>
-    <link rel="alternate" href="https://spring.io/blog/2022/10/31/spring-cloud-2022-0-0-rc1-is-available" />
-    <category term="releases" label="Releases" />
-    <author>
-      <name>Spencer Gibb</name>
-    </author>
-    <id>tag:spring.io,2022-10-28:4972</id>
-    <updated>2022-10-31T16:22:48Z</updated>
-    <content type="html">&lt;p&gt;On behalf of the community, I am pleased to announce that the Release Candidate 1 (RC1) of the &lt;a href="https://cloud.spring.io"&gt;Spring Cloud 2022.0&lt;/a&gt; Release Train is available today. The release can be found in &lt;a href="https://repo.spring.io/milestone/"&gt;Spring Milestone&lt;/a&gt; repository. You can check out the 2022.0 &lt;a href="https://github.com/spring-cloud/spring-cloud-release/wiki/Spring-Cloud-2022.0-Release-Notes"&gt;release notes for more information&lt;/a&gt;.&lt;/p&gt;&lt;h2&gt;&lt;a href="#notable-changes-in-the-2022-0-0-release-train" class="anchor" name="notable-changes-in-the-2022-0-0-release-train"&gt;&lt;/a&gt;Notable Changes in the 2022.0.0 Release Train&lt;/h2&gt;
-&lt;p&gt;See all issues closed &lt;a href="https://github.com/orgs/spring-cloud/projects/86/"&gt;here&lt;/a&gt;.&lt;/p&gt;&lt;h3&gt;&lt;a href="#spring-cloud-function" class="anchor" name="spring-cloud-function"&gt;&lt;/a&gt;Spring Cloud Function&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;Updates for Observability and Native Hints&lt;/li&gt;
-&lt;/ul&gt;&lt;h3&gt;&lt;a href="#spring-cloud-openfeign" class="anchor" name="spring-cloud-openfeign"&gt;&lt;/a&gt;Spring Cloud OpenFeign&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;Added support for target URL refreshing (&lt;a href="https://github.com/spring-cloud/spring-cloud-openfeign/issues/710"&gt;#710&lt;/a&gt;)&lt;/li&gt;
-  &lt;li&gt;Added support for LoadBalancer X-Forwarded Headers (&lt;a href="https://github.com/spring-cloud/spring-cloud-openfeign/pull/748"&gt;#748&lt;/a&gt;)&lt;/li&gt;
-  &lt;li&gt;Set Jackson Autoconfiguration to be enabled by default (&lt;a href="https://github.com/spring-cloud/spring-cloud-openfeign/pull/476"&gt;#476&lt;/a&gt;)&lt;/li&gt;
-  &lt;li&gt;Removed deprecations and adjusted to the API changes in Feign (&lt;a href="https://github.com/spring-cloud/spring-cloud-openfeign/pull/768"&gt;#768&lt;/a&gt;)&lt;/li&gt;
-&lt;/ul&gt;&lt;h3&gt;&lt;a href="#spring-cloud-commons" class="anchor" name="spring-cloud-commons"&gt;&lt;/a&gt;Spring Cloud Commons&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;Support added for property-based configuration for weighted load-balancing (&lt;a href="https://github.com/spring-cloud/spring-cloud-commons/pull/1163"&gt;#1163&lt;/a&gt;)&lt;/li&gt;
-&lt;/ul&gt;&lt;h3&gt;&lt;a href="#spring-cloud-netflix" class="anchor" name="spring-cloud-netflix"&gt;&lt;/a&gt;Spring Cloud Netflix&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;Migrated Apache HttpClient to Apache HC5 HttpClient (&lt;a href="https://github.com/spring-cloud/spring-cloud-netflix/pull/4126"&gt;#4126&lt;/a&gt;)&lt;/li&gt;
-&lt;/ul&gt;&lt;h3&gt;&lt;a href="#spring-cloud-stream" class="anchor" name="spring-cloud-stream"&gt;&lt;/a&gt;Spring Cloud Stream&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;Updates for Observability&lt;/li&gt;
-&lt;/ul&gt;&lt;h3&gt;&lt;a href="#spring-cloud-gateway" class="anchor" name="spring-cloud-gateway"&gt;&lt;/a&gt;Spring Cloud Gateway&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;Added option to &lt;a href="https://github.com/spring-cloud/spring-cloud-gateway/pull/2750"&gt;configure CORS per route&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;Added support for &lt;a href="https://github.com/spring-cloud/spring-cloud-gateway/pull/2755"&gt;URI variables for Circuit Breaker filter&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;Added support for &lt;a href="https://github.com/spring-cloud/spring-cloud-gateway/pull/2759"&gt;a local response cache filter&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;h3&gt;&lt;a href="#spring-cloud-config" class="anchor" name="spring-cloud-config"&gt;&lt;/a&gt;Spring Cloud Config&lt;/h3&gt;
-&lt;ul&gt;
-  &lt;li&gt;Added support for &lt;a href="https://docs.spring.io/spring-cloud-config/docs/4.0.0-RC1/reference/html/#_aot_and_native_image_support_2"&gt;Spring Native support for Config Client&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;The following modules were updated as part of 2022.0.0-RC1:&lt;/p&gt;
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th&gt;Module &lt;/th&gt;
-      &lt;th&gt;Version &lt;/th&gt;
-      &lt;th&gt;Issues&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Bus &lt;/td&gt;
-      &lt;td&gt;4.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;&amp;nbsp;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Contract &lt;/td&gt;
-      &lt;td&gt;4.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;&amp;nbsp;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Function &lt;/td&gt;
-      &lt;td&gt;4.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;&amp;nbsp;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Vault &lt;/td&gt;
-      &lt;td&gt;4.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;&amp;nbsp;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Circuitbreaker &lt;/td&gt;
-      &lt;td&gt;3.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;&amp;nbsp;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Openfeign &lt;/td&gt;
-      &lt;td&gt;4.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;(&lt;a href="https://github.com/spring-cloud/spring-cloud-openfeign/milestone/56?closed=1"&gt;issues&lt;/a&gt;)&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Zookeeper &lt;/td&gt;
-      &lt;td&gt;4.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;&amp;nbsp;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Commons &lt;/td&gt;
-      &lt;td&gt;4.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;(&lt;a href="https://github.com/spring-cloud/spring-cloud-commons/milestone/106?closed=1"&gt;issues&lt;/a&gt;)&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Kubernetes &lt;/td&gt;
-      &lt;td&gt;3.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;(&lt;a href="https://github.com/spring-cloud/spring-cloud-kubernetes/milestone/51?closed=1"&gt;issues&lt;/a&gt;)&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Task &lt;/td&gt;
-      &lt;td&gt;3.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;(&lt;a href="https://github.com/spring-cloud/spring-cloud-task/milestone/66?closed=1"&gt;issues&lt;/a&gt;)&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Netflix &lt;/td&gt;
-      &lt;td&gt;4.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;(&lt;a href="https://github.com/spring-cloud/spring-cloud-netflix/milestone/115?closed=1"&gt;issues&lt;/a&gt;)&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Stream &lt;/td&gt;
-      &lt;td&gt;4.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;&amp;nbsp;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Consul &lt;/td&gt;
-      &lt;td&gt;4.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;&amp;nbsp;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Starter Build &lt;/td&gt;
-      &lt;td&gt;2022.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;&amp;nbsp;&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Gateway &lt;/td&gt;
-      &lt;td&gt;4.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;(&lt;a href="https://github.com/spring-cloud/spring-cloud-gateway/milestone/71?closed=1"&gt;issues&lt;/a&gt;)&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Config &lt;/td&gt;
-      &lt;td&gt;4.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;(&lt;a href="https://github.com/spring-cloud/spring-cloud-config/milestone/108?closed=1"&gt;issues&lt;/a&gt;)&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Spring Cloud Build &lt;/td&gt;
-      &lt;td&gt;4.0.0-RC1 &lt;/td&gt;
-      &lt;td&gt;&amp;nbsp;&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;As always, we welcome feedback on &lt;a href="https://github.com/spring-cloud/"&gt;GitHub&lt;/a&gt;, on &lt;a href="https://gitter.im/spring-cloud/spring-cloud"&gt;Gitter&lt;/a&gt;, on &lt;a href="https://stackoverflow.com/questions/tagged/spring-cloud"&gt;Stack Overflow&lt;/a&gt;, or on &lt;a href="https://twitter.com/SpringCloud"&gt;Twitter&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;To get started with Maven with a BOM (dependency management only):&lt;/p&gt;
-&lt;pre&gt;&lt;code class="prettyprint xml"&gt;&amp;lt;repositories&amp;gt;&#xD;
-    &amp;lt;repository&amp;gt;&#xD;
-        &amp;lt;id&amp;gt;spring-milestones&amp;lt;/id&amp;gt;&#xD;
-        &amp;lt;name&amp;gt;Spring Milestones&amp;lt;/name&amp;gt;&#xD;
-        &amp;lt;url&amp;gt;https://repo.spring.io/milestone&amp;lt;/url&amp;gt;&#xD;
-        &amp;lt;snapshots&amp;gt;&#xD;
-            &amp;lt;enabled&amp;gt;false&amp;lt;/enabled&amp;gt;&#xD;
-        &amp;lt;/snapshots&amp;gt;&#xD;
-    &amp;lt;/repository&amp;gt;&#xD;
-&amp;lt;/repositories&amp;gt;&#xD;
-&amp;lt;dependencyManagement&amp;gt;&#xD;
-    &amp;lt;dependencies&amp;gt;&#xD;
-        &amp;lt;dependency&amp;gt;&#xD;
-            &amp;lt;groupId&amp;gt;org.springframework.cloud&amp;lt;/groupId&amp;gt;&#xD;
-            &amp;lt;artifactId&amp;gt;spring-cloud-dependencies&amp;lt;/artifactId&amp;gt;&#xD;
-            &amp;lt;version&amp;gt;2022.0.0-RC1&amp;lt;/version&amp;gt;&#xD;
-            &amp;lt;type&amp;gt;pom&amp;lt;/type&amp;gt;&#xD;
-            &amp;lt;scope&amp;gt;import&amp;lt;/scope&amp;gt;&#xD;
-        &amp;lt;/dependency&amp;gt;&#xD;
-    &amp;lt;/dependencies&amp;gt;&#xD;
-&amp;lt;/dependencyManagement&amp;gt;&#xD;
-&amp;lt;dependencies&amp;gt;&#xD;
-    &amp;lt;dependency&amp;gt;&#xD;
-        &amp;lt;groupId&amp;gt;org.springframework.cloud&amp;lt;/groupId&amp;gt;&#xD;
-        &amp;lt;artifactId&amp;gt;spring-cloud-starter-config&amp;lt;/artifactId&amp;gt;&#xD;
-    &amp;lt;/dependency&amp;gt;&#xD;
-    &amp;lt;dependency&amp;gt;&#xD;
-        &amp;lt;groupId&amp;gt;org.springframework.cloud&amp;lt;/groupId&amp;gt;&#xD;
-        &amp;lt;artifactId&amp;gt;spring-cloud-starter-netflix-eureka-client&amp;lt;/artifactId&amp;gt;&#xD;
-    &amp;lt;/dependency&amp;gt;&#xD;
-    ...&#xD;
-&amp;lt;/dependencies&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;or with Gradle:&lt;/p&gt;
-&lt;pre&gt;&lt;code class="prettyprint groovy"&gt;plugins {&#xD;
-  id &amp;#39;org.springframework.boot&amp;#39; version &amp;#39;3.0.0-RC1&amp;#39;&#xD;
-  id &amp;#39;io.spring.dependency-management&amp;#39; version &amp;#39;1.1.0&amp;#39;&#xD;
-  id &amp;#39;java&amp;#39;&#xD;
-}&#xD;
-&#xD;
-group = &amp;#39;com.example&amp;#39;&#xD;
-version = &amp;#39;0.0.1-SNAPSHOT&amp;#39;&#xD;
-sourceCompatibility = &amp;#39;17&amp;#39;&#xD;
-&#xD;
-repositories {&#xD;
-  mavenCentral()&#xD;
-  maven { url &amp;#39;https://repo.spring.io/milestone&amp;#39; }&#xD;
-}&#xD;
-&#xD;
-ext {&#xD;
-  set(&amp;#39;springCloudVersion&amp;#39;, &amp;quot;2022.0.0-RC1&amp;quot;)&#xD;
-}&#xD;
-&#xD;
-dependencies {&#xD;
-  implementation &amp;#39;org.springframework.cloud:spring-cloud-starter-config&amp;#39;&#xD;
-  implementation &amp;#39;org.springframework.cloud:spring-cloud-starter-netflix-eureka-client&amp;#39;&#xD;
-}
-&lt;/code&gt;&lt;/pre&gt;
 &lt;!-- rendered by Sagan Renderer Service --&gt;</content>
   </entry>
 </feed>
