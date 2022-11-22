@@ -46,6 +46,9 @@ public class S005_PracticeForm {
 			commands.selectByVisibleText("Wait Commands");
 			
 			
+			driver.findElement(By.name("photo")).sendKeys("C:\\Users\\chintan\\Desktop\\logo-tops.png");
+			
+			
 			try {
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
