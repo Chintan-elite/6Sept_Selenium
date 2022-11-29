@@ -3,8 +3,11 @@ package basic;
 import java.util.List;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
 
 import util.Driverconnection;
@@ -15,6 +18,10 @@ public class S013_PracticeForm {
 		
 		WebDriver driver = Driverconnection.connect();
 		driver.get("https://demoqa.com/automation-practice-form");
+		Actions builder = new Actions(driver);
+		
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		js.executeScript("window.scrollBy(0,document.body.scrollHeight)");
 		
 		
 		driver.findElement(By.id("firstName")).sendKeys("abcd");
@@ -53,6 +60,20 @@ public class S013_PracticeForm {
 			}
 		}
 		
+		WebElement subject = driver.findElement(By.id("subjectsContainer"));
+		builder.click(subject)
+				.sendKeys("Maths")
+				.sendKeys(Keys.ARROW_DOWN)
+				.sendKeys(Keys.ENTER)
+				.build()
+				.perform();
+		
+		driver.findElement(By.xpath("//input[@id='hobbies-checkbox-1']/following-sibling::label")).click();
+		driver.findElement(By.xpath("//input[@id='hobbies-checkbox-2']/following-sibling::label")).click();
+		
+		driver.findElement(By.id("uploadPicture")).sendKeys("C:\\Users\\chintan\\Desktop\\classwork\\logo-tops.png");
+		
+		driver.findElement(By.id("currentAddress")).sendKeys("surat");
 		
 		Thread.sleep(5000);
 		driver.quit();
