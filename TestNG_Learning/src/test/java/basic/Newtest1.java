@@ -20,7 +20,7 @@ public class Newtest1 {
 	public void alpha()
 	{
 		System.out.println("running alpha test");
-	}
+	} 
 	
 	@Test(priority = 3)
 	public void home()

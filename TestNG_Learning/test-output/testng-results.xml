@@ -1,25 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testng-results ignored="1" total="4" passed="3" failed="0" skipped="0">
+<testng-results ignored="0" total="3" passed="3" failed="0" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite started-at="2022-12-20T09:06:31 IST" name="Default suite" finished-at="2022-12-20T09:06:31 IST" duration-ms="170">
+  <suite started-at="2022-12-22T09:00:23 IST" name="Default suite" finished-at="2022-12-22T09:00:27 IST" duration-ms="4261">
     <groups>
     </groups>
-    <test started-at="2022-12-20T09:06:31 IST" name="Default test" finished-at="2022-12-20T09:06:31 IST" duration-ms="170">
-      <class name="basic.Newtest1">
-        <test-method signature="login()[pri:1, instance:basic.Newtest1@121314f7]" started-at="2022-12-20T09:06:31 IST" name="login" finished-at="2022-12-20T09:06:31 IST" duration-ms="13" status="PASS">
+    <test started-at="2022-12-22T09:00:23 IST" name="Default test" finished-at="2022-12-22T09:00:27 IST" duration-ms="4261">
+      <class name="parameters.Parameterised_login_multi">
+        <test-method is-config="true" signature="openBrowser()[pri:0, instance:parameters.Parameterised_login_multi@3ba987b8]" started-at="2022-12-22T09:00:23 IST" name="openBrowser" finished-at="2022-12-22T09:00:27 IST" duration-ms="3519" status="PASS">
           <reporter-output>
           </reporter-output>
-        </test-method> <!-- login -->
-        <test-method signature="home()[pri:3, instance:basic.Newtest1@121314f7]" started-at="2022-12-20T09:06:31 IST" name="home" finished-at="2022-12-20T09:06:31 IST" duration-ms="1" status="PASS">
+        </test-method> <!-- openBrowser -->
+        <test-method signature="logintest(java.lang.String,java.lang.String)[pri:0, instance:parameters.Parameterised_login_multi@3ba987b8]" started-at="2022-12-22T09:00:27 IST" name="logintest" data-provider="dp" finished-at="2022-12-22T09:00:27 IST" duration-ms="260" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[tops@gmail.com]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[tops123]]>
+              </value>
+            </param>
+          </params>
           <reporter-output>
           </reporter-output>
-        </test-method> <!-- home -->
-        <test-method signature="test1()[pri:4, instance:basic.Newtest1@121314f7]" started-at="2022-12-20T09:06:31 IST" name="test1" finished-at="2022-12-20T09:06:31 IST" duration-ms="3" status="PASS">
+        </test-method> <!-- logintest -->
+        <test-method signature="logintest(java.lang.String,java.lang.String)[pri:0, instance:parameters.Parameterised_login_multi@3ba987b8]" started-at="2022-12-22T09:00:27 IST" name="logintest" data-provider="dp" finished-at="2022-12-22T09:00:27 IST" duration-ms="207" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[abc@gmail.com]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[tops123]]>
+              </value>
+            </param>
+          </params>
           <reporter-output>
           </reporter-output>
-        </test-method> <!-- test1 -->
-      </class> <!-- basic.Newtest1 -->
+        </test-method> <!-- logintest -->
+        <test-method signature="logintest(java.lang.String,java.lang.String)[pri:0, instance:parameters.Parameterised_login_multi@3ba987b8]" started-at="2022-12-22T09:00:27 IST" name="logintest" data-provider="dp" finished-at="2022-12-22T09:00:27 IST" duration-ms="200" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[xyz@gmail.com]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[tops123]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- logintest -->
+      </class> <!-- parameters.Parameterised_login_multi -->
     </test> <!-- Default test -->
   </suite> <!-- Default suite -->
 </testng-results>

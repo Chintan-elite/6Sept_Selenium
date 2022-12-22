@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Suite">
+  <test  name="smoke">
+  <groups>
+  <run>
+  <include name="smoke"></include>
+  </run>
+  </groups>
+    <classes>
+      <class name="eshop.Home"/>
+      <class name="eshop.Payment"/>
+      <class name="eshop.Cart"/>
+    </classes>
+  </test> <!-- Test -->
+  
+  <test  name="sanity">
+  <groups>
+  <run>
+  <include name="sanity"></include>
+  <exclude name="smoke"></exclude>
+  </run>
+  </groups>
+    <classes>
+      <class name="eshop.Home"/>
+      <class name="eshop.Payment"/>
+      <class name="eshop.Cart"/>
+    </classes>
+  </test> 
+</suite> <!-- Suite -->
