@@ -10,9 +10,10 @@ public class Newtest1 {
 		System.out.println("Running test1...");
 	}
 	
-	@Test(priority = 1)
+	@Test(priority = 1,expectedExceptions = ArithmeticException.class)
 	public void login()
 	{
+		int j = 10/0;
 		System.out.println("login test...");
 	}
 	
