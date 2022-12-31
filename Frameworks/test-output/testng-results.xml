@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results ignored="0" total="6" passed="6" failed="0" skipped="0">
+  <reporter-output>
+  </reporter-output>
+  <suite started-at="2022-12-31T09:00:05 IST" name="Default suite" finished-at="2022-12-31T09:00:22 IST" duration-ms="17865">
+    <groups>
+    </groups>
+    <test started-at="2022-12-31T09:00:05 IST" name="Default test" finished-at="2022-12-31T09:00:22 IST" duration-ms="17865">
+      <class name="com.Hybriddriven">
+        <test-method signature="test(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String)[pri:0, instance:com.Hybriddriven@8f2ef19]" started-at="2022-12-31T09:00:07 IST" name="test" data-provider="dp" finished-at="2022-12-31T09:00:11 IST" duration-ms="4228" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[open browser]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[browser]]>
+              </value>
+            </param>
+            <param index="2">
+              <value>
+                <![CDATA[na]]>
+              </value>
+            </param>
+            <param index="3">
+              <value>
+                <![CDATA[na]]>
+              </value>
+            </param>
+            <param index="4">
+              <value>
+                <![CDATA[chrome]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- test -->
+        <test-method signature="test(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String)[pri:0, instance:com.Hybriddriven@8f2ef19]" started-at="2022-12-31T09:00:11 IST" name="test" data-provider="dp" finished-at="2022-12-31T09:00:14 IST" duration-ms="2377" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[lunch url]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[url]]>
+              </value>
+            </param>
+            <param index="2">
+              <value>
+                <![CDATA[na]]>
+              </value>
+            </param>
+            <param index="3">
+              <value>
+                <![CDATA[na]]>
+              </value>
+            </param>
+            <param index="4">
+              <value>
+                <![CDATA[https://topsint.com/topserp/index.php]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- test -->
+        <test-method signature="test(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String)[pri:0, instance:com.Hybriddriven@8f2ef19]" started-at="2022-12-31T09:00:14 IST" name="test" data-provider="dp" finished-at="2022-12-31T09:00:16 IST" duration-ms="2109" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[optin]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[select]]>
+              </value>
+            </param>
+            <param index="2">
+              <value>
+                <![CDATA[id]]>
+              </value>
+            </param>
+            <param index="3">
+              <value>
+                <![CDATA[lutype]]>
+              </value>
+            </param>
+            <param index="4">
+              <value>
+                <![CDATA[Faculty]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- test -->
+        <test-method signature="test(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String)[pri:0, instance:com.Hybriddriven@8f2ef19]" started-at="2022-12-31T09:00:16 IST" name="test" data-provider="dp" finished-at="2022-12-31T09:00:18 IST" duration-ms="2103" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[username]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[type]]>
+              </value>
+            </param>
+            <param index="2">
+              <value>
+                <![CDATA[id]]>
+              </value>
+            </param>
+            <param index="3">
+              <value>
+                <![CDATA[l_username]]>
+              </value>
+            </param>
+            <param index="4">
+              <value>
+                <![CDATA[tops@gmail.com]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- test -->
+        <test-method signature="test(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String)[pri:0, instance:com.Hybriddriven@8f2ef19]" started-at="2022-12-31T09:00:18 IST" name="test" data-provider="dp" finished-at="2022-12-31T09:00:20 IST" duration-ms="2144" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[password]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[type]]>
+              </value>
+            </param>
+            <param index="2">
+              <value>
+                <![CDATA[id]]>
+              </value>
+            </param>
+            <param index="3">
+              <value>
+                <![CDATA[l_password]]>
+              </value>
+            </param>
+            <param index="4">
+              <value>
+                <![CDATA[xyz123]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- test -->
+        <test-method signature="test(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String)[pri:0, instance:com.Hybriddriven@8f2ef19]" started-at="2022-12-31T09:00:20 IST" name="test" data-provider="dp" finished-at="2022-12-31T09:00:22 IST" duration-ms="2230" status="PASS">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[login]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[click]]>
+              </value>
+            </param>
+            <param index="2">
+              <value>
+                <![CDATA[name]]>
+              </value>
+            </param>
+            <param index="3">
+              <value>
+                <![CDATA[btn_login]]>
+              </value>
+            </param>
+            <param index="4">
+              <value>
+                <![CDATA[NA]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- test -->
+      </class> <!-- com.Hybriddriven -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>

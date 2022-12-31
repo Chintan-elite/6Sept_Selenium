@@ -6,30 +6,16 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ExcellReader {
-	
-	public static void main(String[] args) {
 		
-		ExcellReader ex = new ExcellReader();
-		int rows =  ex.rowCount();
-		System.out.println("total rows : "+rows);
-		int cols = ex.colCount();
-		System.out.println("total cols : "+cols);
-		
-		for(int i=0;i<rows;i++)
-		{
-			for(int j=0;j<cols;j++)
-			{
-				String data = ex.getData(i, j);
-				System.out.print(data+"  ");
-			}
-			System.out.println();
-		}
-		
+	public ExcellReader(String filePath, String sheetName) {
+		super();
+		this.filePath = filePath;
+		this.sheetName = sheetName;
 	}
-	
-	
-	String filePath = "C:\\Users\\chintan\\Desktop\\classwork\\mytest.xlsx";
-	String sheetName = "reg";
+
+
+	String filePath;
+	String sheetName;
 	
 	public int rowCount()
 	{
