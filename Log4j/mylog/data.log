@@ -1,0 +1,5 @@
+08:38:00.736 [main] INFO  com.MyTest - This is my info msg
+08:38:00.739 [main] ERROR com.MyTest - this is my error message
+08:38:00.740 [main] FATAL com.MyTest - this is fatal msg
+08:38:32.060 [main] ERROR com.MyTest2 - this is my error message
+08:38:32.064 [main] FATAL com.MyTest2 - this is fatal msg

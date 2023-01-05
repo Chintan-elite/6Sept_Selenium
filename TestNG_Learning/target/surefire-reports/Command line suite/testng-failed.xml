@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Failed suite [Command line suite]" verbose="0">
+  <test thread-count="5" name="Command line test(failed)" verbose="0">
+    <classes>
+      <class name="listener.FbTest">
+        <methods>
+          <include name="login" invocation-numbers="0"/>
+          <include name="titleCheck" invocation-numbers="0"/>
+        </methods>
+      </class> <!-- listener.FbTest -->
+      <class name="crossbrowser.MyTest">
+        <methods>
+          <include name="test"/>
+        </methods>
+      </class> <!-- crossbrowser.MyTest -->
+      <class name="parameters.LoginTest">
+        <methods>
+          <include name="login"/>
+        </methods>
+      </class> <!-- parameters.LoginTest -->
+    </classes>
+  </test> <!-- Command line test(failed) -->
+</suite> <!-- Failed suite [Command line suite] -->
